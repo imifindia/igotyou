@@ -132,6 +132,10 @@
                 geolocate.trigger();
             });
 
+            // Add compass and zoom controls
+            var navControl = new mapboxgl.NavigationControl({ showCompass: true });
+            map.addControl(navControl);
+
             // Get the user's location
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(function (position) {
