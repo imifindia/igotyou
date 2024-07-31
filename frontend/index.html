@@ -83,6 +83,7 @@
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.12.0/mapbox-gl.js"></script>
     <script>
         mapboxgl.accessToken = 'pk.eyJ1IjoiaW1pZmluZGlhIiwiYSI6ImNsejhtM3J5dTAyZmwybHNkcjlrZzUyM2UifQ.EYhRAkvwwMyTz7X-CGmudA';
+        var LANGUAGES = ["en", "ml"]
 
         document.addEventListener('DOMContentLoaded', function () {
             var map = new mapboxgl.Map({
@@ -130,7 +131,7 @@
             //Load language specific parts.
             var lang = navigator.language || navigator.userLanguage;
             lang = lang.substring(0, 2);
-            if (!["en", "ml"].includes(lang)) {
+            if (!LANGUAGES.includes(lang)) {
                 lang = "en"
             }
 
