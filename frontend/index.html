@@ -9,7 +9,7 @@
     <style>
         body {
             margin: 0;
-            height: 100vh;
+            height: 100svh;
             font-family: Arial, sans-serif;
             display: flex;
             flex-direction: column;
@@ -92,16 +92,34 @@
                 zoom: 13
             });
 
+            // Locate button.
+            var geolocate = new mapboxgl.GeolocateControl({
+                positionOptions: {
+                    enableHighAccuracy: true
+                },
+                showUserLocation: false,
+                trackUserLocation: false
+            });
+            map.addControl(geolocate);
+            map.on('load', function () {
+                map.resize();
+                geolocate.trigger();
+            });
+
             // Get the user's location
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(function (position) {
                     var lat = position.coords.latitude;
                     var lon = position.coords.longitude;
-                    var userMarker = new mapboxgl.Marker()
+                    var userMarker = new mapboxgl.Marker({ draggable: true })
                         .setLngLat([lon, lat])
-                        .setPopup(new mapboxgl.Popup().setHTML('You are here'))
                         .addTo(map);
                     map.setCenter([lon, lat]);
+
+                    geolocate.on('geolocate', (e) => {
+                        map.setCenter([e.coords.longitude, e.coords.latitude]);
+                        userMarker.setLngLat([e.coords.longitude, e.coords.latitude])
+                    });
                 }, function () {
                     alert('Unable to retrieve your location');
                 });
@@ -112,7 +130,6 @@
             //Load language specific parts.
             var lang = navigator.language || navigator.userLanguage;
             lang = lang.substring(0, 2);
-            alert(lang)
             if (!["en", "ml"].includes(lang)) {
                 lang = "en"
             }
