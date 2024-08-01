@@ -102,6 +102,7 @@
     <script>
         mapboxgl.accessToken = 'pk.eyJ1IjoiaW1pZmluZGlhIiwiYSI6ImNsejhtM3J5dTAyZmwybHNkcjlrZzUyM2UifQ.EYhRAkvwwMyTz7X-CGmudA';
         var LANGUAGES = ["en", "ml"]
+        var MAX_IMAGE_SIZE = 720;
 
         document.addEventListener('DOMContentLoaded', function () {
             var map = new mapboxgl.Map({
@@ -180,58 +181,106 @@
                     if (this.status == 404) {
                         elmnt.innerHTML = "Content not found.";
                     }
+
+                    // Image resizing.
+                    var imageInput = document.getElementById('images');
+                    imageInput.addEventListener('change', function (event) {
+                        if (event.target.dataset.processed) {
+                            // Reset the flag and return to prevent recursion
+                            event.target.dataset.processed = '';
+                            return;
+                        }
+
+                        var file = event.target.files[0];
+                        if (!file) return;
+
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+                            var img = new Image();
+                            img.onload = function () {
+                                var canvas = document.createElement('canvas');
+                                var ctx = canvas.getContext('2d');
+
+                                let width = img.width;
+                                let height = img.height;
+
+                                // Scale down if bigger edge is larger than MAX_IMAGE_SIZE.
+                                let scale = Math.min(1, MAX_IMAGE_SIZE / Math.max(width, height));
+                                width *= scale;
+                                height *= scale;
+
+                                canvas.width = width;
+                                canvas.height = height;
+                                ctx.drawImage(img, 0, 0, width, height);
+
+                                canvas.toBlob(function (blob) {
+                                    var newFile = new File([blob], 'resized-image.jpg', { type: 'image/jpeg' });
+
+                                    var dataTransfer = new DataTransfer();
+                                    dataTransfer.items.add(newFile);
+                                    imageInput.files = dataTransfer.files;
+
+                                    imageInput.dataset.processed = 'true';
+
+                                    var changeEvent = new Event('change');
+                                    imageInput.dispatchEvent(changeEvent);
+                                }, file.type);
+                            };
+                            img.src = e.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                    });
+
+                    // Form submission.
+                    document.getElementById('reportForm').addEventListener('submit', function (e) {
+                        e.preventDefault();
+                        alert("submit click");
+                        var phone = document.getElementById('phone').value;
+                        var adults = document.getElementById('adults').value;
+                        var healthy = document.getElementById('healthy').value;
+                        var children = document.getElementById('children').value;
+                        if (notes && adults && healthy && children && navigator.geolocation) {
+                            navigator.geolocation.getCurrentPosition(function (position) {
+                                var lat = position.coords.latitude;
+                                var lon = position.coords.longitude;
+                                var apiUrl = 'https://3e00v8q0w2.execute-api.ap-south-1.amazonaws.com/prod/igmin_igotyou_operations';
+                                var apiToken = 'iRhRWA3DDk2nnFBVfMQjC5wKEZ1F875s7HBCP9pc'; // Replace with your actual API token
+
+                                var requestBody = {
+                                    lat: lat,
+                                    lon: lon,
+                                    notes: notes
+                                };
+
+                                fetch(apiUrl, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'x-api-key': `${apiToken}`
+                                    },
+                                    body: JSON.stringify(requestBody)
+                                })
+                                    .then(response => {
+                                        if (response.ok) {
+                                            console.log('Details reported successfully');
+                                        } else {
+                                            console.error('Failed to report Details');
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('An error occurred:', error);
+                                    });
+                                alert('Details reported: ' + lat + ', ' + lon + ' - ' + notes);
+
+                            });
+                        } else {
+                            alert('Please allow location access and fill required data.');
+                        }
+                    });
                 }
             }
             xhttp.open("GET", lang + ".html", true);
             xhttp.send();
-
-            // Form submission
-            document.getElementById('reportForm').addEventListener('submit', function (e) {
-                e.preventDefault();
-                alert("submit click");
-                var phone = document.getElementById('phone').value;
-                var adults = document.getElementById('adults').value;
-                var healthy = document.getElementById('healthy').value;
-                var children = document.getElementById('children').value;
-                if (notes && adults && healthy && children && navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(function (position) {
-                        var lat = position.coords.latitude;
-                        var lon = position.coords.longitude;
-                        const apiUrl = 'https://3e00v8q0w2.execute-api.ap-south-1.amazonaws.com/prod/igmin_igotyou_operations';
-                        const apiToken = 'iRhRWA3DDk2nnFBVfMQjC5wKEZ1F875s7HBCP9pc'; // Replace with your actual API token
-
-                        const requestBody = {
-                            lat: lat,
-                            lon: lon,
-                            notes: notes
-                        };
-
-                        fetch(apiUrl, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'x-api-key': `${apiToken}`
-                            },
-                            body: JSON.stringify(requestBody)
-                        })
-                            .then(response => {
-                                if (response.ok) {
-                                    console.log('Details reported successfully');
-                                } else {
-                                    console.error('Failed to report Details');
-                                }
-                            })
-                            .catch(error => {
-                                console.error('An error occurred:', error);
-                            });
-                        alert('Details reported: ' + lat + ', ' + lon + ' - ' + notes);
-
-                    });
-                } else {
-                    alert('Please allow location access and fill required data.');
-                }
-            });
-
         });
     </script>
 </body>
