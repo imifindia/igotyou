@@ -197,33 +197,7 @@
                     navigator.geolocation.getCurrentPosition(function (position) {
                         var lat = position.coords.latitude;
                         var lon = position.coords.longitude;
-                        const apiUrl = 'https://3e00v8q0w2.execute-api.ap-south-1.amazonaws.com/prod/igmin_igotyou_operations';
-                        const apiToken = 'iRhRWA3DDk2nnFBVfMQjC5wKEZ1F875s7HBCP9pc'; // Replace with your actual API token
-
-                        const requestBody = {
-                            lat: lat,
-                            lon: lon,
-                            notes: notes
-                        };
-
-                        fetch(apiUrl, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'x-api-key': `${apiToken}`
-                            },
-                            body: JSON.stringify(requestBody)
-                        })
-                            .then(response => {
-                                if (response.ok) {
-                                    console.log('Details reported successfully');
-                                } else {
-                                    console.error('Failed to report Details');
-                                }
-                            })
-                            .catch(error => {
-                                console.error('An error occurred:', error);
-                            });
+                       
                         alert('Details reported: ' + lat + ', ' + lon + ' - ' + notes);
 
                     });
