@@ -180,7 +180,7 @@
             xhttp.send();
 
             // Form submission
-            document.getElementById('submit').addEventListener('click', function (e) {
+            document.getElementById('reportForm').addEventListener('submit', function (e) {
                 e.preventDefault();
                 alert("submit click");
                 var phone = document.getElementById('phone').value;
@@ -225,6 +225,7 @@
                     alert('Please allow location access and fill required data.');
                 }
             });
+        
         });
     </script>
 </body>
