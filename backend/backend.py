@@ -2,11 +2,35 @@ import json
 import os
 import boto3
 import uuid
+import re
+from collections import defaultdict
 
 # Initialize DynamoDB client
 dynamodb = boto3.resource('dynamodb')
 table_name = os.environ.get('TABLE_NAME')
 table = dynamodb.Table(table_name)
+
+
+def multiparttojson(content):
+    
+    #print(f"Content : {content}")
+    try: 
+        return json.loads(content)
+    except Exception as e:
+        data = defaultdict(list)
+        boundary = re.findall(r'------(.+)', content)[0]
+        parts = content.split(f'------{boundary}')
+        
+        for part in parts[1:-1]:
+            match = re.search(r'Content-Disposition: form-data; name="(.+?)"\r\n\r\n(.+?)\r\n', part)
+            if match:
+                name, value = match.groups()
+                if name != "magic" and name != "images":
+                    data[name] = value
+        
+        # Convert to JSON format
+        json_data = json.dumps(data, indent=4)
+        return json.loads(json_data)
 
 def lambda_handler(event, context):
 
@@ -35,7 +59,9 @@ def lambda_handler(event, context):
     status_message = ""
     if http_method != 'GET':
         # Get the request body (if any)
-        request_body = json.loads(event.get('body', '{}'))
+        requestbody = event.get('body', '{}')
+        print(f"requestbody: {requestbody}")
+        request_body = multiparttojson(requestbody)
         request_body['id'] = str(uuid.uuid4())
         request_body['user_details'] = x_forwarded_for
         print(f"request_body: {request_body}")
@@ -52,12 +78,24 @@ def lambda_handler(event, context):
             response = table.scan()
             item = response.get('Items', [])
             print(f"{len(item)} Records fetched successfully")
-    elif http_method == 'POST':
+        # Return the response
+        print("SUCCESS: Sending Response")
+        print(json.dumps(item))
+        return {
+            'statusCode': 200,
+            'headers': {
+                'Access-Control-Allow-Headers': 'Content-Type',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'OPTIONS,POST,GET'
+            },        
+            'body': json.dumps(item)
+        }            
+    elif http_method == 'POST' or http_method == 'PUT' :
         # Create a new item
         table.put_item(Item=request_body)
         item = request_body
         print("Detailed captured successfully")
-    elif http_method == 'PUT':
+    elif http_method == 'PUT2':
         if 'id' in path_params:
             # Update an existing item
             table.put_item(Item={**request_body, 'id': path_params['id']})
@@ -93,11 +131,13 @@ def lambda_handler(event, context):
     print("SUCCESS: Sending Response")
     print(json.dumps(item))
     return {
-        'statusCode': 200,
+        'statusCode': 302,
+        'statusDescription': 'Request added',
         'headers': {
             'Access-Control-Allow-Headers': 'Content-Type',
             'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'OPTIONS,POST,GET'
+            'Access-Control-Allow-Methods': 'OPTIONS,POST,GET',
+            'Location': 'https://imifindia.github.io/igotyou/success.html'
         },        
         'body': json.dumps(item)
     }
