@@ -190,9 +190,9 @@
                 e.preventDefault();
                 alert("submit click");
                 var phone = document.getElementById('phone').value;
-                var adults = document.getElementById('adults').value;
-                var healthy = document.getElementById('healthy').value;
-                var children = document.getElementById('children').value;
+                var adults = document.getElementById('no_of_adults').value;
+                var healthy = document.getElementById('healthy_people_count').value;
+                var children = document.getElementById('no_of_children').value;
                 if (notes && adults && healthy && children && navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition(function (position) {
                         var lat = position.coords.latitude;
