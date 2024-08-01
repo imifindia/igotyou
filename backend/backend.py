@@ -36,10 +36,17 @@ def lambda_handler(event, context):
 
     #print(f"Received event: {event}")
     try:
+        origin = event['headers'].get("origin","")
+        if origin != "https://imifindia.github.io":
+            print("Request Not Allowed")
+            return {
+                'statusCode': 501,
+                'statusDescription': 'Request Not Allowed'
+            }
         x_forwarded_for = event['headers'].get("X-Forwarded-For","")
         print(f"X-Forwarded-For: {x_forwarded_for}")
     except Exception as e:
-        print("X-Forwarded-For header missing in the request. Cannot proceed.")
+        print("Header missing in the request. Cannot proceed.")
         exit(0)
     
     # Get the HTTP method from the API Gateway event
