@@ -146,9 +146,15 @@
                         .addTo(map);
                     map.setCenter([lon, lat]);
 
+                    userMarker.on('dragend', function () {
+                        var lngLat = userMarker.getLngLat();
+                        document.getElementById('coords').value = `${lngLat.lng},${lngLat.lat}`;
+                    });
+
                     geolocate.on('geolocate', (e) => {
                         map.setCenter([e.coords.longitude, e.coords.latitude]);
                         userMarker.setLngLat([e.coords.longitude, e.coords.latitude])
+                        document.getElementById('coords').value = `${e.coords.longitude},${e.coords.latitude}`;
                     });
                 }, function () {
                     alert('Unable to retrieve your location');
@@ -182,20 +188,24 @@
             // Form submission
             document.getElementById('reportForm').addEventListener('submit', function (e) {
                 e.preventDefault();
+                alert("submit click");
                 var phone = document.getElementById('phone').value;
-                var adults = document.getElementById('adults').value;
-                var healthy = document.getElementById('healthy').value;
-                var children = document.getElementById('children').value;
+                var adults = document.getElementById('no_of_adults').value;
+                var healthy = document.getElementById('healthy_people_count').value;
+                var children = document.getElementById('no_of_children').value;
                 if (notes && adults && healthy && children && navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition(function (position) {
                         var lat = position.coords.latitude;
                         var lon = position.coords.longitude;
-                        alert('Location reported: ' + lat + ', ' + lon + ' - ' + notes);
+                       
+                        alert('Details reported: ' + lat + ', ' + lon + ' - ' + notes);
+
                     });
                 } else {
                     alert('Please allow location access and fill required data.');
                 }
             });
+
         });
     </script>
 </body>

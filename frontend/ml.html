@@ -1,20 +1,24 @@
 <h4>നിങ്ങളുടെ ലൊക്കേഷൻ റിപ്പോർട്ടുചെയ്യുക</h4>
-<form id="reportForm" method="post" enctype="multipart/form-data">
+<form id="reportForm" method="put" enctype="multipart/form-data"
+    action="https://fie5mxoea4.execute-api.ap-south-1.amazonaws.com/prod">
+    <input type="text" id="magic" name="magic" style="display: none;"
+        value="sC2dbenBenT7lWJUCWQ5uB3LdtkdAcio15fLLR6EJ32YcZIdtIpcxFue8ech59Kb1KuqMC4Rl6ySXmQx3FiSlVqOM6FiZmhdQqmF5FrZSO53H3RgyEBit2lfN2OV73Vpseml2pnhvJNWLunoxjAWmRQVAQG8MzcookkAdQtJS9z9A6Dxdw65FoX4zUYNeAKFUQ6kfCwrSWuXjlZSXQrzDuMfz0KGgrCR3nNCrMzdU1GICMLn971U5ObNxWSqetC5">
+    <input type="text" id="coords" name="coords" style="display: none;">
     <div class="form-row">
         <label for="phone">ഫോൺ:</label>
         <input type="tel" id="phone" name="phone">
     </div>
     <div class="form-row">
         <label for="adults">മുതിർന്നവർ:</label>
-        <input type="number" id="adults" name="adults">
+        <input type="number" id="no_of_adults" name="no_of_adults">
     </div>
     <div class="form-row">
         <label for="children">കുട്ടികൾ:</label>
-        <input type="number" id="children" name="children">
+        <input type="number" id="no_of_children" name="no_of_children">
     </div>
     <div class="form-row">
         <label for="healthy">ആരോഗ്യമുള്ളവർ:</label>
-        <input type="number" id="healthy" name="healthy">
+        <input type="number" id="healthy_people_count" name="healthy_people_count">
     </div>
     <div class="form-row">
         <label for="notes">കുറിപ്പുകൾ:</label>
