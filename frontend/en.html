@@ -1,5 +1,5 @@
 <h4>Report Your Location</h4>
-<form id="reportForm" method="put" enctype="multipart/form-data" action="javascript:void(0);">
+<form id="reportForm" method="put" enctype="multipart/form-data" action="https://3e00v8q0w2.execute-api.ap-south-1.amazonaws.com/prod/igmin_igotyou_operations">
     <div class="form-row">
         <label for="phone">Phone:</label>
         <input type="tel" id="phone" name="phone">
@@ -27,50 +27,4 @@
     <div class="form-row">
         <input id="submit" type="submit" value="Report">
     </div>
-    <script>
-        // Get the form element
-        const form = document.getElementById('reportForm');
-
-        // Add an event listener for form submission
-        form.addEventListener('submit', function(e) {
-            e.preventDefault(); // Prevent the default form submission behavior
-
-            // Get the form data
-            const formData = new FormData(form);
-
-            // Construct the request body
-            const requestBody = {};
-            for (const [key, value] of formData.entries()) {
-                requestBody[key] = value;
-            }
-
-            const apiUrl = 'https://3e00v8q0w2.execute-api.ap-south-1.amazonaws.com/prod/igmin_igotyou_operations';
-            const apiToken = 'iRhRWA3DDk2nnFBVfMQjC5wKEZ1F875s7HBCP9pc'; // Replace with your actual API token
-
-            // Make the API call with PUT method
-            fetch(apiUrl, {
-                method: 'PUT',
-                headers: {
-                            'Content-Type': 'application/json',
-                            'x-api-key': `${apiToken}`
-                },
-                body: JSON.stringify(requestBody)
-            })
-            .then(response => {
-                if (response.ok) {
-                    console.log('API request successful');
-                    // Handle the successful response
-                } else {
-                    console.error('API request failed');
-                    // Handle the failed response
-                }
-            })
-            .catch(error => {
-                console.error('An error occurred:', error);
-                // Handle the error
-            });
-        });
-    </script>
-
-
 </form>
