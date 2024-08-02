@@ -281,6 +281,28 @@
             }
             xhttp.open("GET", lang + ".html", true);
             xhttp.send();
+
+            // // Form submission
+            // document.getElementById('reportForm').addEventListener('submit', function (e) {
+            //     e.preventDefault();
+            //     alert("submit click");
+            //     var phone = document.getElementById('phone').value;
+            //     var adults = document.getElementById('no_of_adults').value;
+            //     var healthy = document.getElementById('healthy_people_count').value;
+            //     var children = document.getElementById('no_of_children').value;
+            //     if (notes && adults && healthy && children && navigator.geolocation) {
+            //         navigator.geolocation.getCurrentPosition(function (position) {
+            //             var lat = position.coords.latitude;
+            //             var lon = position.coords.longitude;
+
+            //             alert('Details reported: ' + lat + ', ' + lon + ' - ' + notes);
+
+            //         });
+            //     } else {
+            //         alert('Please allow location access and fill required data.');
+            //     }
+            // });
+
         });
     </script>
 </body>
