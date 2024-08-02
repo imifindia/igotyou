@@ -69,7 +69,7 @@
             }
         })
             .then(response => response.json())
-            .then(data => displayData(data))
+            .then(data => console.log("Ignoring Server side data loading due to data miss match, call the function displayData(data) to load actual server response!",data))
             .catch(error => {
                 console.error('Error fetching data:', error);
             });
