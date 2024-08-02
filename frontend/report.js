@@ -9,10 +9,10 @@ const statusOptions = [
     { status: "Hospitalized", class: "warning" },
     { status: "Returned to Home", class: "success" }
 ];
-
+var data;
 // Function to display fetched JSON data
-function displayData(data) {
-
+function displayData(apiData) {
+    data = [...apiData];
     // Populate the table headers
     const columnDef = [
         { index: 1, title: "Date & Time", variable: "updated_time" },
