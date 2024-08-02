@@ -231,4 +231,4 @@ sampleData = [{
     "prev_status": "Inactive",
     "prev_counter": 10
 }]
-// window.onload = displayData(data);
+window.onload = displayData(sampleData);
