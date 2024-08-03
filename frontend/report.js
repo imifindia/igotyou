@@ -189,7 +189,7 @@ function updateDataList(data) {
 async function fetchReportData() {
     try {
       const apiUrl = 'https://fie5mxoea4.execute-api.ap-south-1.amazonaws.com/prod';
-      const apiKey = process.env.API_KEY || 'iRhRWA3DDk2nnFBVfMQjC5wKEZ1F875s7HBCP9pc';
+      const apiKey = 'iRhRWA3DDk2nnFBVfMQjC5wKEZ1F875s7HBCP9pc';
   
       const response = await fetch(apiUrl, {
         headers: {
