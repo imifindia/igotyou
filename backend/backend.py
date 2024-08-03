@@ -66,7 +66,7 @@ def add_records(request_body):
     person_details = request_body.get("persons","")
     for person in person_details:
         person["id"] = str(uuid.uuid4())
-        person["created_at"] = current_datetime_ist
+        person["updated_time"] = current_datetime_ist
         person["report_id"] = request_body["id"]
         person['up_vote'] = "0"
         person['down_vote'] = "0"
