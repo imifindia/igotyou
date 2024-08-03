@@ -19,8 +19,12 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                el.textContent = i18next.t(key);
+                var key = el.getAttribute('data-i18n');
+                var text = i18next.t(key);
+                console.log(key, text)
+                el.textContent = text;
             });
+
+            document.getElementById('loading').style.display = 'none';
         });
 })

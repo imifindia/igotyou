@@ -150,7 +150,8 @@ submitButton.addEventListener('click', () => {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'x-api-key': `${apiKey}`
+            'x-api-key': `${apiKey}`,
+            'origin': 'https://imifindia.github.io'
         },
         body: JSON.stringify(requestBody)
 

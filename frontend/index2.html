@@ -14,6 +14,13 @@
 </head>
 
 <body>
+    <!-- Loading -->
+    <div class="loading" id="loading">
+        <p>
+            We got you ...
+        </p>
+    </div>
+
     <!-- Navbar -->
     <nav class="navbar navbar-expand navbar-light bg-light position-relative">
         <a class="navbar-brand" href="#">We got you !</a>
@@ -25,8 +32,9 @@
     <!-- Mapbox Map -->
     <div id="map-container">
         <div id="map"></div>
-        <button class="btn btn-success float-above" id="confirm-location-button"><i class="fas fa-check mr-2"></i>Choose
-            this location</button>
+        <button class="btn btn-success float-above" id="confirm-location-button">
+            <i class="fas fa-check mr-2"></i><span data-i18n="choose-this-location"></span>
+        </button>
         <button type="button" class="btn btn-primary floating-button" id="help-button">
             <i class="fas fa-question"></i>
         </button>
