@@ -10,7 +10,9 @@ from datetime import datetime
 # Initialize DynamoDB client
 dynamodb = boto3.resource('dynamodb')
 table_name = os.environ.get('TABLE_NAME')
+persons_table_name = os.environ.get('PERSONS_TABLE_NAME')
 table = dynamodb.Table(table_name)
+persons_table = dynamodb.Table(persons_table_name)
 
 # Get the current datetime in IST timezone
 ist = pytz.timezone('Asia/Kolkata')
@@ -31,28 +33,54 @@ def clean_up_unwanted_fields(items):
     return items
 
 # Function to get the values from the DB
-def get_records(path_params):
-    if path_params is not None and 'id' in path_params:
+def get_records(path_params, query_params):
+    if query_params is not None and 'id' in query_params:
         # Get a single item by ID
-        response = table.get_item(Key={'id': path_params['id']})
+        response = table.get_item(Key={'id': query_params['id']})
         item = response.get('Item')
         print("Record Detail fetched successfully")
+    elif query_params is not None and 'persons' in query_params:
+        # Scan the table for all items
+        response = persons_table.scan()
+        item = response.get('Items', [])
+        print(f"{len(item)} Records fetched successfully")
+        cleaned_up = clean_up_unwanted_fields(item)
+        # Return the response
+        print(cleaned_up)
+        return cleaned_up    
     else:
         # Scan the table for all items
         response = table.scan()
         item = response.get('Items', [])
         print(f"{len(item)} Records fetched successfully")
         cleaned_up = clean_up_unwanted_fields(item)
-    # Return the response
-    print(cleaned_up)
-    return cleaned_up
+        # Return the response
+        print(cleaned_up)
+        return cleaned_up
 
 # Function to add records into DB
 def add_records(request_body):
     
     del request_body["magic"]
-    # Create a new item
+
+    person_details = request_body.get("persons","")
+    for person in person_details:
+        person["id"] = str(uuid.uuid4())
+        person["created_at"] = current_datetime_ist
+        person["report_id"] = request_body["id"]
+        person['up_vote'] = "0"
+        person['down_vote'] = "0"
+        person['prev_status'] = ""
+        person['prev_counter'] = "0"
+        # Insert into Person Details table
+        persons_table.put_item(Item=person)
+        print(f"Person Details added successfully {person}")
+    #remove person records from request
+    del request_body["persons"]
+    # Create a new report
     table.put_item(Item=request_body)
+    print(f"Report Details added successfully {request_body}")
+
     #item = request_body
     print("Detailed captured successfully")
 
@@ -147,15 +175,11 @@ def lambda_handler(event, context):
         request_body['id'] = str(uuid.uuid4())
         request_body['user_details'] = x_forwarded_for
         request_body['updated_time'] = current_datetime_ist
-        request_body['up_vote'] = "0"
-        request_body['down_vote'] = "0"
-        request_body['prev_status'] = ""
-        request_body['prev_counter'] = "0"
         print(f"request_body: {request_body}")
     
     # Perform the requested operation based on the HTTP method
     if http_method == 'GET':
-        item = get_records(path_params)
+        item = get_records(path_params, query_params)
     elif http_method == 'POST':
         add_records(request_body)
     elif http_method == 'PUT':
