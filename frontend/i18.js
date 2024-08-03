@@ -10,24 +10,17 @@ document.addEventListener('DOMContentLoaded', function () {
             backend: {
                 loadPath: '/locales/{{lng}}.json'
             },
+            detection: {
+                order: ['navigator'],
+            }
         }, function (err, t) {
             if (err) {
                 return console.error(err);
             }
 
-            var lang = navigator.language || navigator.userLanguage;
-            lang = lang.substring(0, 2);
-
-            i18next.changeLanguage(lang, (err, t) => {
-                if (err) {
-                    return console.error(err);
-                }
-
-                document.querySelectorAll('[data-i18n]').forEach(el => {
-                    el.textContent = t(el.getAttribute('data-i18n'));
-                });
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                el.textContent = i18next.t(key);
             });
         });
-
-
 })

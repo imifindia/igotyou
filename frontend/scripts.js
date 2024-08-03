@@ -11,7 +11,8 @@ const map = new mapboxgl.Map({
 // Search control.
 var geocoder = new MapboxGeocoder({
     accessToken: mapboxgl.accessToken,
-    mapboxgl: mapboxgl
+    mapboxgl: mapboxgl,
+    marker: false
 });
 map.addControl(geocoder);
 
@@ -49,9 +50,16 @@ if (navigator.geolocation) {
         });
 
         geolocate.on('geolocate', (e) => {
-            map.setCenter([e.coords.longitude, e.coords.latitude]);
+            map.flyTo({ center: [e.coords.longitude, e.coords.latitude], zoom: 15 });
             userMarker.setLngLat([e.coords.longitude, e.coords.latitude])
             document.getElementById('coords').value = `${e.coords.longitude},${e.coords.latitude}`;
+        });
+
+        geocoder.on('result', function (e) {
+            const coordinates = e.result.geometry.coordinates;
+            userMarker.setLngLat(coordinates);
+            map.flyTo({ center: coordinates, zoom: 15 });
+            document.getElementById('coords').value = `${coordinates[0]},${coordinates[1]}`;
         });
     }, function () {
         alert('Unable to retrieve your location');
