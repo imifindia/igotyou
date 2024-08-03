@@ -188,22 +188,26 @@ function updateDataList(data) {
 
 async function fetchReportData() {
     try {
-      const apiUrl = 'https://fie5mxoea4.execute-api.ap-south-1.amazonaws.com/prod';
-      const apiKey = 'iRhRWA3DDk2nnFBVfMQjC5wKEZ1F875s7HBCP9pc';
-  
-      const response = await fetch(apiUrl, {
+
+        const apiUrl = 'https://fie5mxoea4.execute-api.ap-south-1.amazonaws.com/prod';
+        const apiKey = 'iRhRWA3DDk2nnFBVfMQjC5wKEZ1F875s7HBCP9pc';
+
+        const api_response = await fetch(apiUrl, {
+        method: 'POST',
         headers: {
           'x-api-key': apiKey,
           'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(item),
+        });
+        if (api_response.ok) {
+        if (onCompleted) {
+            onCompleted(await api_response.json());
         }
-      });
-  
-      if (!response.ok) {
-        throw new Error(`HTTP error ${response.status}`);
-      }
-  
-      const data = await response.json();
-      displayData(data);
+        } else {
+        console.log(await api_response.text());
+        }       
+        displayData(api_response);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
