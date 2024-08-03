@@ -153,19 +153,17 @@ submitButton.addEventListener('click', () => {
             'x-api-key': `${apiKey}`
         },
         body: JSON.stringify(requestBody)
-    })
-        .then(response => {
-            if (response.ok) {
-                console.log('Details reported successfully');
-            } else {
-                console.error('Failed to report Details');
-            }
-        })
-        .catch(error => {
-            console.error('An error occurred:', error);
-        });
-    alert('Details reported: ' + lat + ', ' + lon + ' - ' + notes);
 
+    }).then(response => {
+        if (response.ok) {
+            console.log('Details reported successfully');
+        } else {
+            console.error('Failed to report Details');
+        }
+
+    }).catch(error => {
+        console.error('An error occurred:', error);
+    });
 });
 
 // Function to add a new person card.
