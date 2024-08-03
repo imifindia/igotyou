@@ -200,13 +200,11 @@ async function fetchReportData() {
         }
         });
         if (api_response.ok) {
-        if (onCompleted) {
-            onCompleted(await api_response.json());
-        }
+            displayData(api_response);
         } else {
         console.log(await api_response.text());
         }       
-        displayData(api_response);
+        
     } catch (error) {
       console.error('Error fetching data:', error);
     }
