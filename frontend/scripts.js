@@ -43,6 +43,7 @@ if (navigator.geolocation) {
             .setLngLat([lon, lat])
             .addTo(map);
         map.setCenter([lon, lat]);
+        document.getElementById('coords').value = `${lat},${lon}`;
 
         userMarker.on('dragend', function () {
             var lngLat = userMarker.getLngLat();
@@ -102,12 +103,38 @@ helpCloseButton.addEventListener('click', () => {
 
 const submitButton = document.getElementById('submit');
 submitButton.addEventListener('click', () => {
+    // Collect data.
+    var form = document.getElementById("report-form");
+    var situation = document.querySelector("#situation").value;
 
+    var persons = Array.from(form.querySelectorAll("[data-person]")).map(person => ({
+        name: person.querySelector("#name").value,
+        nickname: person.querySelector("#nickname").value,
+        familyName: person.querySelector("#family-name").value,
+        contactNumber: person.querySelector("#contact-number").value,
+        status: person.querySelector("#status").value,
+        age: person.querySelector("#name").age,
+        sex: person.querySelector("#name").sex,
+        place: person.querySelector("#name").place,
+    }));
+
+    var kids = document.querySelector("#kids-below-10").value;
+    var seniors = document.querySelector("#seniors-above-60").value;
+    var otherAdults = document.querySelector("#other-adults").value;
+    var notes = document.querySelector("#notes").value;
+
+    var magic = document.querySelector("#magic").value;
+    var coordinates = document.querySelector("#coords").value;
+
+    console.log(situation.value, persons, kids, seniors, otherAdults, notes, magic, coordinates)
 
     document.getElementById('map-container').style.display = 'none';
     document.getElementById('report-form').style.display = 'none';
     document.getElementById('help-section').style.display = 'none';
     document.getElementById('confirmation-screen').style.display = 'block';
+
+    // Make API call.
+
 });
 
 // Function to add a new person card.
@@ -115,7 +142,7 @@ function addPersonCard() {
     const personCard = document.createElement('div');
     personCard.className = 'card mb-3 person-card';
     personCard.innerHTML = `
-      <div class="card-body">
+      <div class="card-body" data-person="">
         <div class="form-row">
           <div class="form-group col-md-6">
             <label for="name">Name</label>
