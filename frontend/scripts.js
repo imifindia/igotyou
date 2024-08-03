@@ -133,7 +133,38 @@ submitButton.addEventListener('click', () => {
     document.getElementById('help-section').style.display = 'none';
     document.getElementById('confirmation-screen').style.display = 'block';
 
-    // Make API call.
+    // Form submission.
+    var apiUrl = 'https://fie5mxoea4.execute-api.ap-south-1.amazonaws.com/prod';
+    var apiKey = 'iRhRWA3DDk2nnFBVfMQjC5wKEZ1F875s7HBCP9pc';
+
+    var requestBody = {
+        situation,
+        persons,
+        kids, seniors, otherAdults,
+        notes,
+        magic,
+        coordinates
+    };
+
+    fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': `${apiKey}`
+        },
+        body: JSON.stringify(requestBody)
+    })
+        .then(response => {
+            if (response.ok) {
+                console.log('Details reported successfully');
+            } else {
+                console.error('Failed to report Details');
+            }
+        })
+        .catch(error => {
+            console.error('An error occurred:', error);
+        });
+    alert('Details reported: ' + lat + ', ' + lon + ' - ' + notes);
 
 });
 
