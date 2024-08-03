@@ -80,25 +80,24 @@ body {
     }
 }
 
-.above {
-    display: inline;
-}
-
-.below {
-    display: none;
-}
-
-@media (min-width: 992px) {
-    .above {
-        display: none;
-    }
-
-    .below {
-        display: inline;
-    }
-}
 
 h5 {
     font-size: 1rem;
     font-weight: bolder;
+}
+
+.float-above {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    margin: 10px;
+}
+
+.floating-button {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    z-index: 999;
+    margin: 10px;
+    border-radius: 50%;
 }

@@ -9,40 +9,28 @@
     <link href="https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.css" rel="stylesheet">
     <link href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.css'
         rel='stylesheet' />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <link href="styles.css" rel="stylesheet">
 </head>
 
 <body>
-    <div class="marquee above">
-        <span>Important Announcement: Please read this message carefully.</span>
-    </div>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light position-relative">
+    <nav class="navbar navbar-expand navbar-light bg-light position-relative">
         <a class="navbar-brand" href="#">We got you !</a>
-        <div class="marquee below">
+        <span class="marquee navbar-nav">
             <span>Important Announcement: Please read this message carefully.</span>
-        </div>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="#" id="mapLink">Map</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#" id="reportLink">Report</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#" id="helpLink" data-i18n="help"></a>
-                </li>
-            </ul>
-        </div>
+        </span>
     </nav>
 
     <!-- Mapbox Map -->
-    <div id="map"></div>
+    <div id="map-container">
+        <div id="map"></div>
+        <button class="btn btn-success float-above" id="confirm-location-button"><i class="fas fa-check mr-2"></i>Choose
+            this location</button>
+        <button type="button" class="btn btn-primary floating-button" id="help-button">
+            <i class="fas fa-question"></i>
+        </button>
+    </div>
 
     <!-- Report Form -->
     <div id="report-form">
@@ -93,21 +81,30 @@
                 <textarea class="form-control" id="notes" rows="3" placeholder="Enter any additional notes"></textarea>
             </div>
         </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <div class="d-flex justify-content-end">
+            <button class="btn btn-secondary mr-2" id="back-to-map-button">Go back</button>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
     </div>
 
     <!-- Help Section -->
     <div id="help-section" class="help-section">
-        <h5 data-i18n="what-we-do-question"></h5>
-        <p data-i18n="what-we-do-answer"></p>
-        <h5 data-i18n="who-we-are-question"></h5>
-        <p data-i18n="who-we-are-answer"></p>
-        <h5 data-i18n="who-is-imif-question"></h5>
-        <p data-i18n="who-is-imif-answer"></p>
-        <h5 data-i18n="how-to-join-question"></h5>
-        <p data-i18n="how-to-join-answer"></p>
-        <h5 data-i18n="imif-disclaimer-title"></h5>
-        <p data-i18n="imif-disclaimer-content"></p>
+        <div class="d-flex justify-content-end">
+            <button class="btn btn-link" id="help-close-button"><i class="fas fa-times text-dark text-end"></i></button>
+        </div>
+
+        <div>
+            <h5 data-i18n="what-we-do-question"></h5>
+            <p data-i18n="what-we-do-answer"></p>
+            <h5 data-i18n="who-we-are-question"></h5>
+            <p data-i18n="who-we-are-answer"></p>
+            <h5 data-i18n="who-is-imif-question"></h5>
+            <p data-i18n="who-is-imif-answer"></p>
+            <h5 data-i18n="how-to-join-question"></h5>
+            <p data-i18n="how-to-join-answer"></p>
+            <h5 data-i18n="imif-disclaimer-title"></h5>
+            <p data-i18n="imif-disclaimer-content"></p>
+        </div>
     </div>
 
     <!-- Bootstrap and Mapbox Scripts -->

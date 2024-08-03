@@ -68,45 +68,33 @@ if (navigator.geolocation) {
     alert('Geolocation is not supported by your browser');
 }
 
-// Navigation related code.
-const mapLink = document.getElementById('mapLink');
-const reportLink = document.getElementById('reportLink');
-const helpLink = document.getElementById('helpLink');
-const links = [mapLink, reportLink, helpLink];
-
-function setActiveLink(activeLink) {
-    links.forEach(link => {
-        link.classList.remove('active');
-    });
-    activeLink.classList.add('active');
-}
-setActiveLink(mapLink);
-
-function showMap() {
-    document.getElementById('map').style.display = 'block';
-    document.getElementById('report-form').style.display = 'none';
-    document.getElementById('help-section').style.display = 'none';
-    map.resize(); // Ensure the map resizes to fit the container
-    setActiveLink(mapLink);
-}
-
-function showReportForm() {
-    document.getElementById('map').style.display = 'none';
-    document.getElementById('report-form').style.display = 'block';
-    document.getElementById('help-section').style.display = 'none';
-    setActiveLink(reportLink);
-}
-
-function showHelp() {
-    document.getElementById('map').style.display = 'none';
+const helpCloseButtonhelpButton = document.getElementById('help-button');
+helpCloseButtonhelpButton.addEventListener('click', () => {
+    document.getElementById('map-container').style.display = 'none';
     document.getElementById('report-form').style.display = 'none';
     document.getElementById('help-section').style.display = 'block';
-    setActiveLink(helpLink);
-}
+});
 
-mapLink.addEventListener('click', showMap);
-reportLink.addEventListener('click', showReportForm);
-helpLink.addEventListener('click', showHelp);
+const confirmLocationButton = document.getElementById('confirm-location-button');
+confirmLocationButton.addEventListener('click', () => {
+    document.getElementById('map-container').style.display = 'none';
+    document.getElementById('report-form').style.display = 'block';
+    document.getElementById('help-section').style.display = 'none';
+});
+
+const backToMapButton = document.getElementById('back-to-map-button');
+backToMapButton.addEventListener('click', () => {
+    document.getElementById('map-container').style.display = 'block';
+    document.getElementById('report-form').style.display = 'none';
+    document.getElementById('help-section').style.display = 'none';
+});
+
+const helpCloseButton = document.getElementById('help-close-button');
+helpCloseButton.addEventListener('click', () => {
+    document.getElementById('map-container').style.display = 'block';
+    document.getElementById('report-form').style.display = 'none';
+    document.getElementById('help-section').style.display = 'none';
+});
 
 // Function to add a new person card.
 function addPersonCard() {
