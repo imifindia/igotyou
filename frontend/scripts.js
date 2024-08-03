@@ -150,10 +150,6 @@ function addPersonCard() {
             <input type="text" class="form-control" id="place" placeholder="Enter your location">
           </div>
         </div>
-        <div class="form-group">
-          <label for="file">File attachment</label>
-          <input type="file" class="form-control-file" id="file">
-        </div>
       </div>
     `;
     document.getElementById('people-container').appendChild(personCard);
