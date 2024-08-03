@@ -199,11 +199,7 @@ async function fetchReportData() {
           'Content-Type': 'application/json'
         }
         });
-        if (api_response.ok) {
-            displayData(api_response);
-        } else {
-        console.log(await api_response.text());
-        }       
+        displayData(await api_response.json());    
         
     } catch (error) {
       console.error('Error fetching data:', error);
