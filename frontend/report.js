@@ -197,7 +197,7 @@ function fetchReportData() {
         }
     })
         .then(response => response.json())
-        .then(data => displayData(data),data))
+        .then(data => displayData(data),data)
         .catch(error => {
             console.error('Error fetching data:', error);
         });
