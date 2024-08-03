@@ -8,16 +8,12 @@ document.addEventListener('DOMContentLoaded', function () {
         .init({
             fallbackLng: 'en',
             backend: {
-                loadPath: '/locales/{{lng}}.json'
+                loadPath: 'locales/{{lng}}.json'
             },
             detection: {
                 order: ['navigator'],
             }
         }, function (err, t) {
-            if (err) {
-                return console.error(err);
-            }
-
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 var key = el.getAttribute('data-i18n');
                 var text = i18next.t(key);
