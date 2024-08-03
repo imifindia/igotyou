@@ -9,10 +9,14 @@ body {
 }
 
 .help-section,
-#map,
+#map-container,
 #report-form {
-    height: 100vh;
+    height: 100%;
     overflow-y: auto;
+}
+
+#map {
+    height: 100%;
 }
 
 .help-section {
@@ -100,4 +104,11 @@ h5 {
     z-index: 999;
     margin: 10px;
     border-radius: 50%;
+}
+
+#confirmation-screen {
+    padding: 20px;
+    display: none;
+    height: 100%;
+    flex: 1;
 }

@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disaster Response App</title>
+    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/v2.12.0/mapbox-gl.css" />
+    <link href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.css'
+        rel='stylesheet' />
+    <style>
+        body {
+            margin: 0;
+            height: 100svh;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+        }
+
+        @media (min-aspect-ratio: 1/1) {
+            body {
+                flex-direction: row;
+            }
+        }
+
+        @media (max-aspect-ratio: 1/1) {
+            body {
+                flex-direction: column;
+            }
+        }
+
+        #map {
+            width: 100%;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .report-form {
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            flex: 0;
+            min-width: 300px;
+        }
+
+        .report-form h4 {
+            margin: 0px 0px 10px 0px;
+        }
+
+        .form-row {
+            display: flex;
+            margin-bottom: 10px;
+            justify-content: end;
+        }
+
+        .form-row label {
+            flex: 1;
+            color: grey;
+            margin-right: 10px;
+            text-align: end;
+            line-height: 1.5;
+        }
+
+        .form-row input,
+        .form-row textarea {
+            flex: 2;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .form-row textarea {
+            resize: none;
+        }
+
+        .form-row input[type="submit"] {
+            padding: 10px;
+            max-width: 200px;
+            color: coral;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+    <div id="form" class="report-form">
+
+    </div>
+
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.12.0/mapbox-gl.js"></script>
+    <script
+        src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.min.js'></script>
+
+    <script>
+        mapboxgl.accessToken = 'pk.eyJ1IjoiaW1pZmluZGlhIiwiYSI6ImNsejhtM3J5dTAyZmwybHNkcjlrZzUyM2UifQ.EYhRAkvwwMyTz7X-CGmudA';
+        var LANGUAGES = ["en", "ml"]
+        var MAX_IMAGE_SIZE = 720;
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var map = new mapboxgl.Map({
+                container: 'map',
+                style: 'mapbox://styles/mapbox/outdoors-v12',
+                center: [-0.09, 51.505],
+                zoom: 13
+            });
+
+            // Search control.
+            var geocoder = new MapboxGeocoder({
+                accessToken: mapboxgl.accessToken,
+                mapboxgl: mapboxgl
+            });
+            map.addControl(geocoder);
+
+            // Locate button.
+            var geolocate = new mapboxgl.GeolocateControl({
+                positionOptions: {
+                    enableHighAccuracy: true
+                },
+                showUserLocation: false,
+                trackUserLocation: false
+            });
+            map.addControl(geolocate);
+            map.on('load', function () {
+                map.resize();
+                geolocate.trigger();
+            });
+
+            // Add compass and zoom controls
+            var navControl = new mapboxgl.NavigationControl({ showCompass: true });
+            map.addControl(navControl);
+
+            // Get the user's location
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    var lat = position.coords.latitude;
+                    var lon = position.coords.longitude;
+                    var userMarker = new mapboxgl.Marker({ draggable: true })
+                        .setLngLat([lon, lat])
+                        .addTo(map);
+                    map.setCenter([lon, lat]);
+
+                    userMarker.on('dragend', function () {
+                        var lngLat = userMarker.getLngLat();
+                        document.getElementById('coords').value = `${lngLat.lng},${lngLat.lat}`;
+                    });
+
+                    geolocate.on('geolocate', (e) => {
+                        map.setCenter([e.coords.longitude, e.coords.latitude]);
+                        userMarker.setLngLat([e.coords.longitude, e.coords.latitude])
+                        document.getElementById('coords').value = `${e.coords.longitude},${e.coords.latitude}`;
+                    });
+                }, function () {
+                    alert('Unable to retrieve your location');
+                });
+            } else {
+                alert('Geolocation is not supported by your browser');
+            }
+
+            //Load language specific parts.
+            var lang = navigator.language || navigator.userLanguage;
+            lang = lang.substring(0, 2);
+            if (!LANGUAGES.includes(lang)) {
+                lang = "en"
+            }
+
+            xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4) {
+                    if (this.status == 200) {
+                        var form = document.getElementById('form');
+                        form.innerHTML = this.responseText;
+                    }
+                    if (this.status == 404) {
+                        elmnt.innerHTML = "Content not found.";
+                    }
+
+                    // Image resizing.
+                    var imageInput = document.getElementById('images');
+                    imageInput.addEventListener('change', function (event) {
+                        if (event.target.dataset.processed) {
+                            // Reset the flag and return to prevent recursion
+                            event.target.dataset.processed = '';
+                            return;
+                        }
+
+                        var file = event.target.files[0];
+                        if (!file) return;
+
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+                            var img = new Image();
+                            img.onload = function () {
+                                var canvas = document.createElement('canvas');
+                                var ctx = canvas.getContext('2d');
+
+                                let width = img.width;
+                                let height = img.height;
+
+                                // Scale down if bigger edge is larger than MAX_IMAGE_SIZE.
+                                let scale = Math.min(1, MAX_IMAGE_SIZE / Math.max(width, height));
+                                width *= scale;
+                                height *= scale;
+
+                                canvas.width = width;
+                                canvas.height = height;
+                                ctx.drawImage(img, 0, 0, width, height);
+
+                                canvas.toBlob(function (blob) {
+                                    var newFile = new File([blob], 'resized-image.jpg', { type: 'image/jpeg' });
+
+                                    var dataTransfer = new DataTransfer();
+                                    dataTransfer.items.add(newFile);
+                                    imageInput.files = dataTransfer.files;
+
+                                    imageInput.dataset.processed = 'true';
+
+                                    var changeEvent = new Event('change');
+                                    imageInput.dispatchEvent(changeEvent);
+                                }, file.type);
+                            };
+                            img.src = e.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                    });
+
+                    // Form submission.
+                    document.getElementById('reportForm').addEventListener('submit', function (e) {
+                        e.preventDefault();
+                        alert("submit click");
+                        var phone = document.getElementById('phone').value;
+                        var adults = document.getElementById('adults').value;
+                        var healthy = document.getElementById('healthy').value;
+                        var children = document.getElementById('children').value;
+                        if (notes && adults && healthy && children && navigator.geolocation) {
+                            navigator.geolocation.getCurrentPosition(function (position) {
+                                var lat = position.coords.latitude;
+                                var lon = position.coords.longitude;
+                                var apiUrl = 'https://3e00v8q0w2.execute-api.ap-south-1.amazonaws.com/prod/igmin_igotyou_operations';
+                                var apiToken = 'iRhRWA3DDk2nnFBVfMQjC5wKEZ1F875s7HBCP9pc'; // Replace with your actual API token
+
+                                var requestBody = {
+                                    lat: lat,
+                                    lon: lon,
+                                    notes: notes
+                                };
+
+                                fetch(apiUrl, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'x-api-key': `${apiToken}`
+                                    },
+                                    body: JSON.stringify(requestBody)
+                                })
+                                    .then(response => {
+                                        if (response.ok) {
+                                            console.log('Details reported successfully');
+                                        } else {
+                                            console.error('Failed to report Details');
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('An error occurred:', error);
+                                    });
+                                alert('Details reported: ' + lat + ', ' + lon + ' - ' + notes);
+
+                            });
+                        } else {
+                            alert('Please allow location access and fill required data.');
+                        }
+                    });
+                }
+            }
+            xhttp.open("GET", lang + ".html", true);
+            xhttp.send();
+
+            // // Form submission
+            // document.getElementById('reportForm').addEventListener('submit', function (e) {
+            //     e.preventDefault();
+            //     alert("submit click");
+            //     var phone = document.getElementById('phone').value;
+            //     var adults = document.getElementById('no_of_adults').value;
+            //     var healthy = document.getElementById('healthy_people_count').value;
+            //     var children = document.getElementById('no_of_children').value;
+            //     if (notes && adults && healthy && children && navigator.geolocation) {
+            //         navigator.geolocation.getCurrentPosition(function (position) {
+            //             var lat = position.coords.latitude;
+            //             var lon = position.coords.longitude;
+
+            //             alert('Details reported: ' + lat + ', ' + lon + ' - ' + notes);
+
+            //         });
+            //     } else {
+            //         alert('Please allow location access and fill required data.');
+            //     }
+            // });
+
+        });
+    </script>
+</body>
+
+</html>

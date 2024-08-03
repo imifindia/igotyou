@@ -4,307 +4,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Disaster Response App</title>
-    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/v2.12.0/mapbox-gl.css" />
+    <title>We got you !</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.css" rel="stylesheet">
     <link href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.css'
         rel='stylesheet' />
-    <style>
-        body {
-            margin: 0;
-            height: 100svh;
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-        }
-
-        @media (min-aspect-ratio: 1/1) {
-            body {
-                flex-direction: row;
-            }
-        }
-
-        @media (max-aspect-ratio: 1/1) {
-            body {
-                flex-direction: column;
-            }
-        }
-
-        #map {
-            width: 100%;
-            flex: 1;
-            overflow: hidden;
-        }
-
-        .report-form {
-            background: white;
-            padding: 10px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-            flex: 0;
-            min-width: 300px;
-        }
-
-        .report-form h4 {
-            margin: 0px 0px 10px 0px;
-        }
-
-        .form-row {
-            display: flex;
-            margin-bottom: 10px;
-            justify-content: end;
-        }
-
-        .form-row label {
-            flex: 1;
-            color: grey;
-            margin-right: 10px;
-            text-align: end;
-            line-height: 1.5;
-        }
-
-        .form-row input,
-        .form-row textarea {
-            flex: 2;
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        .form-row textarea {
-            resize: none;
-        }
-
-        .form-row input[type="submit"] {
-            padding: 10px;
-            max-width: 200px;
-            color: coral;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-    </style>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
 </head>
 
 <body>
-    <div id="map"></div>
-    <div id="form" class="report-form">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand navbar-light bg-light position-relative">
+        <a class="navbar-brand" href="#">We got you !</a>
+        <span class="marquee navbar-nav">
+            <span>Important Announcement: Please read this message carefully.</span>
+        </span>
+    </nav>
 
+    <!-- Mapbox Map -->
+    <div id="map-container">
+        <div id="map"></div>
+        <button class="btn btn-success float-above" id="confirm-location-button"><i class="fas fa-check mr-2"></i>Choose
+            this location</button>
+        <button type="button" class="btn btn-primary floating-button" id="help-button">
+            <i class="fas fa-question"></i>
+        </button>
     </div>
 
-    <script src="https://api.mapbox.com/mapbox-gl-js/v2.12.0/mapbox-gl.js"></script>
+    <!-- Report Form -->
+    <div id="report-form">
+        <input type="text" id="magic" name="magic" style="display: none;"
+            value="sC2dbenBenT7lWJUCWQ5uB3LdtkdAcio15fLLR6EJ32YcZIdtIpcxFue8ech59Kb1KuqMC4Rl6ySXmQx3FiSlVqOM6FiZmhdQqmF5FrZSO53H3RgyEBit2lfN2OV73Vpseml2pnhvJNWLunoxjAWmRQVAQG8MzcookkAdQtJS9z9A6Dxdw65FoX4zUYNeAKFUQ6kfCwrSWuXjlZSXQrzDuMfz0KGgrCR3nNCrMzdU1GICMLn971U5ObNxWSqetC5">
+        <input type="text" id="coords" name="coords" style="display: none;">
+
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="situation">Your situation</label>
+                <select class="form-control" id="situation">
+                    <option>We are here and need help</option>
+                    <option>I know they were there, and need help</option>
+                </select>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="marked">Have you set the location in the map ?</label>
+                <select class="form-control" id="marked">
+                    <option>Yes</option>
+                    <option>No</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-12">
+                <p>Please fill out and submit the following form, adding as many people as there are.</p>
+            </div>
+        </div>
+        <div id="people-container">
+            <!-- Person Card Template will be inserted here -->
+        </div>
+        <button id="add-person-btn" class="btn btn-secondary mb-3"><i class="fas fa-plus"></i> Add more people</button>
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="kids-below-10">Number of kids</label>
+                <input type="number" class="form-control" id="kids-below-10" placeholder="Below 10 years">
+            </div>
+            <div class="form-group col-md-4">
+                <label for="seniors-above-60">Number of senior citizens</label>
+                <input type="number" class="form-control" id="seniors-above-60" placeholder="Above 60 years">
+            </div>
+            <div class="form-group col-md-4">
+                <label for="other-adults">Number of other adults</label>
+                <input type="number" class="form-control" id="other-adults" placeholder="Other adults">
+            </div>
+            <div class="form-group col-12">
+                <label for="notes">Notes</label>
+                <textarea class="form-control" id="notes" rows="3" placeholder="Enter any additional notes"></textarea>
+            </div>
+        </div>
+        <div class="d-flex justify-content-end">
+            <button class="btn btn-secondary mr-2" id="back-to-map-button">Go back</button>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </div>
+
+    <!-- Help Section -->
+    <div id="help-section" class="help-section">
+        <div class="d-flex justify-content-end">
+            <button class="btn btn-link" id="help-close-button"><i class="fas fa-times text-dark text-end"></i></button>
+        </div>
+
+        <div>
+            <h5 data-i18n="what-we-do-question"></h5>
+            <p data-i18n="what-we-do-answer"></p>
+            <h5 data-i18n="who-we-are-question"></h5>
+            <p data-i18n="who-we-are-answer"></p>
+            <h5 data-i18n="who-is-imif-question"></h5>
+            <p data-i18n="who-is-imif-answer"></p>
+            <h5 data-i18n="how-to-join-question"></h5>
+            <p data-i18n="how-to-join-answer"></p>
+            <h5 data-i18n="imif-disclaimer-title"></h5>
+            <p data-i18n="imif-disclaimer-content"></p>
+        </div>
+    </div>
+
+    <!-- Bootstrap and Mapbox Scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.js"></script>
     <script
         src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.min.js'></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/i18next-http-backend@1.3.1/i18nextHttpBackend.min.js"></script>
+    <script src="https://unpkg.com/i18next@21.6.3/dist/umd/i18next.min.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/i18next-browser-languagedetector@6.1.4/dist/umd/i18nextBrowserLanguageDetector.min.js"></script>
 
-    <script>
-        mapboxgl.accessToken = 'pk.eyJ1IjoiaW1pZmluZGlhIiwiYSI6ImNsejhtM3J5dTAyZmwybHNkcjlrZzUyM2UifQ.EYhRAkvwwMyTz7X-CGmudA';
-        var LANGUAGES = ["en", "ml"]
-        var MAX_IMAGE_SIZE = 720;
-
-        document.addEventListener('DOMContentLoaded', function () {
-            var map = new mapboxgl.Map({
-                container: 'map',
-                style: 'mapbox://styles/mapbox/outdoors-v12',
-                center: [-0.09, 51.505],
-                zoom: 13
-            });
-
-            // Search control.
-            var geocoder = new MapboxGeocoder({
-                accessToken: mapboxgl.accessToken,
-                mapboxgl: mapboxgl
-            });
-            map.addControl(geocoder);
-
-            // Locate button.
-            var geolocate = new mapboxgl.GeolocateControl({
-                positionOptions: {
-                    enableHighAccuracy: true
-                },
-                showUserLocation: false,
-                trackUserLocation: false
-            });
-            map.addControl(geolocate);
-            map.on('load', function () {
-                map.resize();
-                geolocate.trigger();
-            });
-
-            // Add compass and zoom controls
-            var navControl = new mapboxgl.NavigationControl({ showCompass: true });
-            map.addControl(navControl);
-
-            // Get the user's location
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(function (position) {
-                    var lat = position.coords.latitude;
-                    var lon = position.coords.longitude;
-                    var userMarker = new mapboxgl.Marker({ draggable: true })
-                        .setLngLat([lon, lat])
-                        .addTo(map);
-                    map.setCenter([lon, lat]);
-
-                    userMarker.on('dragend', function () {
-                        var lngLat = userMarker.getLngLat();
-                        document.getElementById('coords').value = `${lngLat.lng},${lngLat.lat}`;
-                    });
-
-                    geolocate.on('geolocate', (e) => {
-                        map.setCenter([e.coords.longitude, e.coords.latitude]);
-                        userMarker.setLngLat([e.coords.longitude, e.coords.latitude])
-                        document.getElementById('coords').value = `${e.coords.longitude},${e.coords.latitude}`;
-                    });
-                }, function () {
-                    alert('Unable to retrieve your location');
-                });
-            } else {
-                alert('Geolocation is not supported by your browser');
-            }
-
-            //Load language specific parts.
-            var lang = navigator.language || navigator.userLanguage;
-            lang = lang.substring(0, 2);
-            if (!LANGUAGES.includes(lang)) {
-                lang = "en"
-            }
-
-            xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function () {
-                if (this.readyState == 4) {
-                    if (this.status == 200) {
-                        var form = document.getElementById('form');
-                        form.innerHTML = this.responseText;
-                    }
-                    if (this.status == 404) {
-                        elmnt.innerHTML = "Content not found.";
-                    }
-
-                    // Image resizing.
-                    var imageInput = document.getElementById('images');
-                    imageInput.addEventListener('change', function (event) {
-                        if (event.target.dataset.processed) {
-                            // Reset the flag and return to prevent recursion
-                            event.target.dataset.processed = '';
-                            return;
-                        }
-
-                        var file = event.target.files[0];
-                        if (!file) return;
-
-                        var reader = new FileReader();
-                        reader.onload = function (e) {
-                            var img = new Image();
-                            img.onload = function () {
-                                var canvas = document.createElement('canvas');
-                                var ctx = canvas.getContext('2d');
-
-                                let width = img.width;
-                                let height = img.height;
-
-                                // Scale down if bigger edge is larger than MAX_IMAGE_SIZE.
-                                let scale = Math.min(1, MAX_IMAGE_SIZE / Math.max(width, height));
-                                width *= scale;
-                                height *= scale;
-
-                                canvas.width = width;
-                                canvas.height = height;
-                                ctx.drawImage(img, 0, 0, width, height);
-
-                                canvas.toBlob(function (blob) {
-                                    var newFile = new File([blob], 'resized-image.jpg', { type: 'image/jpeg' });
-
-                                    var dataTransfer = new DataTransfer();
-                                    dataTransfer.items.add(newFile);
-                                    imageInput.files = dataTransfer.files;
-
-                                    imageInput.dataset.processed = 'true';
-
-                                    var changeEvent = new Event('change');
-                                    imageInput.dispatchEvent(changeEvent);
-                                }, file.type);
-                            };
-                            img.src = e.target.result;
-                        };
-                        reader.readAsDataURL(file);
-                    });
-
-                    // Form submission.
-                    document.getElementById('reportForm').addEventListener('submit', function (e) {
-                        e.preventDefault();
-                        alert("submit click");
-                        var phone = document.getElementById('phone').value;
-                        var adults = document.getElementById('adults').value;
-                        var healthy = document.getElementById('healthy').value;
-                        var children = document.getElementById('children').value;
-                        if (notes && adults && healthy && children && navigator.geolocation) {
-                            navigator.geolocation.getCurrentPosition(function (position) {
-                                var lat = position.coords.latitude;
-                                var lon = position.coords.longitude;
-                                var apiUrl = 'https://3e00v8q0w2.execute-api.ap-south-1.amazonaws.com/prod/igmin_igotyou_operations';
-                                var apiToken = 'iRhRWA3DDk2nnFBVfMQjC5wKEZ1F875s7HBCP9pc'; // Replace with your actual API token
-
-                                var requestBody = {
-                                    lat: lat,
-                                    lon: lon,
-                                    notes: notes
-                                };
-
-                                fetch(apiUrl, {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                        'x-api-key': `${apiToken}`
-                                    },
-                                    body: JSON.stringify(requestBody)
-                                })
-                                    .then(response => {
-                                        if (response.ok) {
-                                            console.log('Details reported successfully');
-                                        } else {
-                                            console.error('Failed to report Details');
-                                        }
-                                    })
-                                    .catch(error => {
-                                        console.error('An error occurred:', error);
-                                    });
-                                alert('Details reported: ' + lat + ', ' + lon + ' - ' + notes);
-
-                            });
-                        } else {
-                            alert('Please allow location access and fill required data.');
-                        }
-                    });
-                }
-            }
-            xhttp.open("GET", lang + ".html", true);
-            xhttp.send();
-
-            // // Form submission
-            // document.getElementById('reportForm').addEventListener('submit', function (e) {
-            //     e.preventDefault();
-            //     alert("submit click");
-            //     var phone = document.getElementById('phone').value;
-            //     var adults = document.getElementById('no_of_adults').value;
-            //     var healthy = document.getElementById('healthy_people_count').value;
-            //     var children = document.getElementById('no_of_children').value;
-            //     if (notes && adults && healthy && children && navigator.geolocation) {
-            //         navigator.geolocation.getCurrentPosition(function (position) {
-            //             var lat = position.coords.latitude;
-            //             var lon = position.coords.longitude;
-
-            //             alert('Details reported: ' + lat + ', ' + lon + ' - ' + notes);
-
-            //         });
-            //     } else {
-            //         alert('Please allow location access and fill required data.');
-            //     }
-            // });
-
-        });
-    </script>
+    <script src="scripts.js"></script>
+    <script src="i18.js"></script>
 </body>
 
 </html>

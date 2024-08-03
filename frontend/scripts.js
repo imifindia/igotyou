@@ -73,6 +73,7 @@ helpCloseButtonhelpButton.addEventListener('click', () => {
     document.getElementById('map-container').style.display = 'none';
     document.getElementById('report-form').style.display = 'none';
     document.getElementById('help-section').style.display = 'block';
+    document.getElementById('confirmation-screen').style.display = 'none';
 });
 
 const confirmLocationButton = document.getElementById('confirm-location-button');
@@ -80,6 +81,7 @@ confirmLocationButton.addEventListener('click', () => {
     document.getElementById('map-container').style.display = 'none';
     document.getElementById('report-form').style.display = 'block';
     document.getElementById('help-section').style.display = 'none';
+    document.getElementById('confirmation-screen').style.display = 'none';
 });
 
 const backToMapButton = document.getElementById('back-to-map-button');
@@ -87,6 +89,7 @@ backToMapButton.addEventListener('click', () => {
     document.getElementById('map-container').style.display = 'block';
     document.getElementById('report-form').style.display = 'none';
     document.getElementById('help-section').style.display = 'none';
+    document.getElementById('confirmation-screen').style.display = 'none';
 });
 
 const helpCloseButton = document.getElementById('help-close-button');
@@ -94,6 +97,17 @@ helpCloseButton.addEventListener('click', () => {
     document.getElementById('map-container').style.display = 'block';
     document.getElementById('report-form').style.display = 'none';
     document.getElementById('help-section').style.display = 'none';
+    document.getElementById('confirmation-screen').style.display = 'none';
+});
+
+const submitButton = document.getElementById('submit');
+submitButton.addEventListener('click', () => {
+
+
+    document.getElementById('map-container').style.display = 'none';
+    document.getElementById('report-form').style.display = 'none';
+    document.getElementById('help-section').style.display = 'none';
+    document.getElementById('confirmation-screen').style.display = 'block';
 });
 
 // Function to add a new person card.
