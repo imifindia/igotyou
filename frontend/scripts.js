@@ -157,13 +157,16 @@ submitButton.addEventListener('click', () => {
 
     }).then(response => {
         if (response.ok) {
-            console.log('Details reported successfully');
+            document.getElementById('confirmation-message').innerHTML =
+                `<p>${i18next.t('report-submited')}</p>  <i class="fas fa-check text-success display-1"></i>`
         } else {
-            console.error('Failed to report Details');
+            document.getElementById('confirmation-message').innerHTML =
+                `<p>${i18next.t('report-failed')}</p>  <i class="fas fa-times text-success display-1"></i>`
         }
 
     }).catch(error => {
-        console.error('An error occurred:', error);
+        document.getElementById('confirmation-message').innerHTML =
+            `<p>${i18next.t('report-failed')}</p>  <i class="fas fa-times text-danger display-1"></i>`
     });
 });
 
@@ -175,50 +178,50 @@ function addPersonCard() {
       <div class="card-body" data-person="">
         <div class="form-row">
           <div class="form-group col-md-6">
-            <label for="name">Name</label>
-            <input type="text" class="form-control" id="name" placeholder="Enter your name">
+            <label for="name">${i18next.t('name')}</label>
+            <input type="text" class="form-control" id="name" placeholder="${i18next.t('name-hint')}">
           </div>
           <div class="form-group col-md-6">
-            <label for="nickname">Nickname</label>
-            <input type="text" class="form-control" id="nickname" placeholder="Enter your nickname">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group col-md-6">
-            <label for="family-name">Family name</label>
-            <input type="text" class="form-control" id="family-name" placeholder="Enter your family name">
-          </div>
-          <div class="form-group col-md-6">
-            <label for="contact-number">Contact number</label>
-            <input type="tel" class="form-control" id="contact-number" placeholder="Enter your contact number">
+            <label for="nickname">${i18next.t('nickname')}</label>
+            <input type="text" class="form-control" id="nickname" placeholder="${i18next.t('nickname-hint')}">
           </div>
         </div>
         <div class="form-row">
           <div class="form-group col-md-6">
-            <label for="status">Status</label>
+            <label for="family-name">${i18next.t('family-name')}</label>
+            <input type="text" class="form-control" id="family-name" placeholder="${i18next.t('family-name-hint')}">
+          </div>
+          <div class="form-group col-md-6">
+            <label for="contact-number">${i18next.t('contact-number')}</label>
+            <input type="tel" class="form-control" id="contact-number" placeholder="${i18next.t('contact-number-hint')}">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="status">${i18next.t('status')}</label>
             <select class="form-control" id="status">
-              <option>healthy</option>
-              <option>disabled</option>
-              <option>injured</option>
+              <option>${i18next.t('status-healthy')}</option>
+              <option>${i18next.t('status-disabled')}</option>
+              <option>${i18next.t('status-injured')}</option>
             </select>
           </div>
           <div class="form-group col-md-6">
-            <label for="age">Age</label>
-            <input type="number" class="form-control" id="age" placeholder="Enter your age">
+            <label for="age">${i18next.t('age')}</label>
+            <input type="number" class="form-control" id="age" placeholder="${i18next.t('age-hint')}">
           </div>
         </div>
         <div class="form-row">
           <div class="form-group col-md-6">
-            <label for="sex">Sex</label>
+            <label for="sex">${i18next.t('sex')}</label>
             <select class="form-control" id="sex">
-              <option>Male</option>
-              <option>Female</option>
-              <option>Other</option>
+              <option>${i18next.t('sex-male')}</option>
+              <option>${i18next.t('sex-female')}</option>
+              <option>${i18next.t('sex-others')}</option>
             </select>
           </div>
           <div class="form-group col-md-6">
-            <label for="place">Place</label>
-            <input type="text" class="form-control" id="place" placeholder="Enter your location">
+            <label for="place">${i18next.t('place')}</label>
+            <input type="text" class="form-control" id="place" placeholder="${i18next.t('place-hint')}">
           </div>
         </div>
       </div>
@@ -231,5 +234,3 @@ document.getElementById('add-person-btn').addEventListener('click', function (ev
     event.preventDefault();
     addPersonCard();
 });
-
-addPersonCard();

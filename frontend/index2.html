@@ -48,47 +48,57 @@
 
         <div class="form-row">
             <div class="form-group col-12">
-                <label for="situation">Your situation</label>
+                <label for="situation" data-i18n="your-situation"></label>
                 <select class="form-control" id="situation">
-                    <option value="1">We are here and need help</option>
-                    <option value="2">I know they were there, and need help</option>
+                    <option value="1" data-i18n="we-are-here-and-need-help"></option>
+                    <option value="2" data-i18n="they-were-there-and-need-help"></option>
                 </select>
             </div>
         </div>
         <div class="form-row">
             <div class="form-group col-12">
-                <p>Please fill out and submit the following form, adding as many people as there are.</p>
+                <p data-i18n="please-fill-the-form"></p>
             </div>
         </div>
         <div id="people-container">
             <!-- Person Card Template will be inserted here -->
         </div>
-        <button id="add-person-btn" class="btn btn-secondary mb-3"><i class="fas fa-plus"></i> Add more people</button>
+        <button id="add-person-btn" class="btn btn-secondary mb-3">
+            <i class="fas fa-plus"></i>
+            <span data-i18n="add-more-people"> </span>
+        </button>
         <div class="form-row">
             <div class="form-group col-md-4">
-                <label for="kids-below-10">Number of kids</label>
-                <input type="number" class="form-control" id="kids-below-10" placeholder="Below 10 years">
+                <label for="kids-below-10" data-i18n="number-of-kids"></label>
+                <input type="number" class="form-control" id="kids-below-10"
+                    data-i18n-placeholder="number-of-kids-hint">
             </div>
             <div class="form-group col-md-4">
-                <label for="seniors-above-60">Number of senior citizens</label>
-                <input type="number" class="form-control" id="seniors-above-60" placeholder="Above 60 years">
+                <label for="seniors-above-60" data-i18n="number-of-seniors"></label>
+                <input type="number" class="form-control" id="seniors-above-60"
+                    data-i18n-placeholder="number-of-seniors-hint">
             </div>
             <div class="form-group col-md-4">
-                <label for="other-adults">Number of other adults</label>
-                <input type="number" class="form-control" id="other-adults" placeholder="Other adults">
+                <label for="other-adults" data-i18n="number-of-other-adults"></label>
+                <input type="number" class="form-control" id="other-adults"
+                    data-i18n-placeholder="number-of-other-adults-hint">
             </div>
             <div class="form-group col-12">
-                <label for="file">File attachment</label>
+                <label for="file" data-i18n="file-attachment"></label>
                 <input type="file" class="form-control-file" id="file">
             </div>
             <div class="form-group col-12">
-                <label for="notes">Notes</label>
-                <textarea class="form-control" id="notes" rows="3" placeholder="Enter any additional notes"></textarea>
+                <label for="notes" data-i18n="notes"></label>
+                <textarea class="form-control" id="notes" rows="3" data-i18n-placeholder="notes-hint"></textarea>
             </div>
         </div>
         <div class="d-flex justify-content-end">
-            <button class="btn btn-secondary mr-2" id="back-to-map-button">Go back</button>
-            <button type="submit" class="btn btn-primary" id="submit">Submit</button>
+            <button class="btn btn-secondary mr-2" id="back-to-map-button">
+                <span data-i18n="go-back"></span>
+            </button>
+            <button type="submit" class="btn btn-primary" id="submit">
+                <span data-i18n="submit"></span>
+            </button>
         </div>
     </div>
 
@@ -114,11 +124,8 @@
 
     <!-- Confirmation screen -->
     <div id="confirmation-screen">
-        <div class="d-flex align-items-center justify-content-center flex-column" style="height: 100%;">
-            <p>
-                Your report has been submitted.
-            </p>
-            <i class="fas fa-check text-success display-1"></i>
+        <div class="d-flex align-items-center justify-content-center flex-column" style="height: 100%;"
+            id="confirmation-message">
         </div>
     </div>
 
