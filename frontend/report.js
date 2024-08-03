@@ -186,23 +186,29 @@ function updateDataList(data) {
     updateList.push(data);
 }
 
-function fetchReportData() {
-    const apiUrl = 'https://fie5mxoea4.execute-api.ap-south-1.amazonaws.com/prod';
-
-    // Fetch data from the API
-    fetch(apiUrl, {
+async function fetchReportData() {
+    try {
+      const apiUrl = 'https://fie5mxoea4.execute-api.ap-south-1.amazonaws.com/prod';
+      const apiKey = process.env.API_KEY || 'iRhRWA3DDk2nnFBVfMQjC5wKEZ1F875s7HBCP9pc';
+  
+      const response = await fetch(apiUrl, {
         headers: {
-            'x-api-key': 'iRhRWA3DDk2nnFBVfMQjC5wKEZ1F875s7HBCP9pc',
-            'Content-Type': 'application/json'
+          'x-api-key': apiKey,
+          'Content-Type': 'application/json'
         }
-    })
-        .then(response => response.json())
-        .then(data => displayData(data),data)
-        .catch(error => {
-            console.error('Error fetching data:', error);
-        });
-    
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error ${response.status}`);
+      }
+  
+      const data = await response.json();
+      displayData(data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
 }
+
 const updateList = [];
 sampleData = [{
     "id": 1,

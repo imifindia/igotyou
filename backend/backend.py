@@ -4,12 +4,94 @@ import boto3
 import uuid
 import re
 from collections import defaultdict
+import pytz
+from datetime import datetime
 
 # Initialize DynamoDB client
 dynamodb = boto3.resource('dynamodb')
 table_name = os.environ.get('TABLE_NAME')
 table = dynamodb.Table(table_name)
 
+# Get the current datetime in IST timezone
+ist = pytz.timezone('Asia/Kolkata')
+now_ist = datetime.now(ist)
+# Get the current date and time together in IST
+current_datetime_ist = now_ist.strftime("%Y-%m-%dT%H:%M:%S")
+
+# List of fields which neednt be sent back in the get API call
+unwanted_fields = ['id', 'user_details']
+
+def clean_up_unwanted_fields(items):
+    # Logic to remove unwanted fields from the item
+    for record in items:
+        for field in unwanted_fields:
+            if field in record:
+                del record[field]
+    #print(f"clean_up_unwanted_fields: {items}")
+    return items
+
+# Function to get the values from the DB
+def get_records(path_params):
+    if path_params is not None and 'id' in path_params:
+        # Get a single item by ID
+        response = table.get_item(Key={'id': path_params['id']})
+        item = response.get('Item')
+        print("Record Detail fetched successfully")
+    else:
+        # Scan the table for all items
+        response = table.scan()
+        item = response.get('Items', [])
+        print(f"{len(item)} Records fetched successfully")
+        cleaned_up = clean_up_unwanted_fields(item)
+    # Return the response
+    print("SUCCESS: Sending Response")
+    print(cleaned_up)
+    return {
+        'statusCode': 200,
+        'headers': {
+            'Access-Control-Allow-Headers': 'Content-Type',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'OPTIONS,POST,GET'
+        },        
+        'body': cleaned_up
+    } 
+
+# Function to add records into DB
+def add_records(request_body):
+    
+    del request_body["magic"]
+    # Create a new item
+    table.put_item(Item=request_body)
+    #item = request_body
+    print("Detailed captured successfully")
+
+# Function to update records in the DB
+def update_records(path_params, request_body):
+    if 'id' in path_params:
+        # Update an existing item
+        table.put_item(Item={**request_body, 'id': path_params['id']})
+        print("Details updated successfully")
+
+    else:
+        # Return an error if the ID is not provided
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Missing Person ID'})
+        }
+
+# Function to delete records from the DB
+def delete_records(path_params):
+    if path_params is not None  and 'id' in path_params:
+        # Delete an item by ID
+        table.delete_item(Key={'id': path_params['id']})
+        item = {'id': path_params['id']}
+        print("Details deletion skipped Successfully")
+    else:
+        # Return an error if the ID is not provided
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Missing Person ID'})
+        }
 
 def multiparttojson(content):
     
@@ -30,7 +112,7 @@ def multiparttojson(content):
         
         # Convert to JSON format
         json_data = json.dumps(data, indent=4)
-        return json.loads(json_data)
+        return json_data
 
 def lambda_handler(event, context):
 
@@ -66,69 +148,33 @@ def lambda_handler(event, context):
     status_message = ""
     if http_method != 'GET':
         # Get the request body (if any)
-        requestbody = event.get('body', '{}')
-        print(f"requestbody: {requestbody}")
-        request_body = multiparttojson(requestbody)
+        requestbody = event.get('body', '')
+        #request_body = multiparttojson(requestbody)
+        request_body = json.loads(requestbody)
+
         request_body['id'] = str(uuid.uuid4())
         request_body['user_details'] = x_forwarded_for
+        request_body['updated_time'] = current_datetime_ist
+        request_body['up_vote'] = 0
+        request_body['down_vote'] = 0
+        request_body['prev_status'] = ""
+        request_body['prev_counter'] = 0
         print(f"request_body: {request_body}")
     
     # Perform the requested operation based on the HTTP method
     if http_method == 'GET':
-        if path_params is not None and 'id' in path_params:
-            # Get a single item by ID
-            response = table.get_item(Key={'id': path_params['id']})
-            item = response.get('Item')
-            print("Record Detail fetched successfully")
-        else:
-            # Scan the table for all items
-            response = table.scan()
-            item = response.get('Items', [])
-            print(f"{len(item)} Records fetched successfully")
-        # Return the response
-        print("SUCCESS: Sending Response")
-        print(json.dumps(item))
-        return {
-            'statusCode': 200,
-            'headers': {
-                'Access-Control-Allow-Headers': 'Content-Type',
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': 'OPTIONS,POST,GET'
-            },        
-            'body': json.dumps(item)
-        }            
-    elif http_method == 'POST' or http_method == 'PUT' :
-        # Create a new item
-        table.put_item(Item=request_body)
-        item = request_body
-        print("Detailed captured successfully")
-    elif http_method == 'PUT2':
-        if 'id' in path_params:
-            # Update an existing item
-            table.put_item(Item={**request_body, 'id': path_params['id']})
-            print("Details updated successfully")
-
-        else:
-            # Return an error if the ID is not provided
-            return {
-                'statusCode': 400,
-                'body': json.dumps({'error': 'Missing Person ID'})
-            }
+        get_records(path_params)
+    elif http_method == 'POST':
+        add_records(request_body)
+    elif http_method == 'PUT':
+        update_records(path_params, request_body)
     elif http_method == 'DELETE':
-        if path_params is not None  and 'id' in path_params:
-            # Delete an item by ID
-            #table.delete_item(Key={'id': path_params['id']})
-            #item = {'id': path_params['id']}
-            print("Details deletion skipped Successfully")
-        else:
-            # Return an error if the ID is not provided
-            return {
-                'statusCode': 400,
-                'body': json.dumps({'error': 'Missing Person ID'})
-            }
+        # Delete Skipped for now
+        print("Delete Skipped")
+        #delete_records(path_params, request_body)
     else:
         # Return an error for unsupported HTTP methods
-        print("ERROR: unsupported HTTP methods")
+        print("ERROR: unsupported methods")
         return {
             'statusCode': 405,
             'body': json.dumps({'error': 'Method not allowed'})
@@ -138,13 +184,11 @@ def lambda_handler(event, context):
     print("SUCCESS: Sending Response")
     print(json.dumps(item))
     return {
-        'statusCode': 302,
-        'statusDescription': 'Request added',
+        'statusCode': 200,
         'headers': {
             'Access-Control-Allow-Headers': 'Content-Type',
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Methods': 'OPTIONS,POST,GET',
-            'Location': 'https://imifindia.github.io/igotyou/success.html'
         },        
         'body': json.dumps(item)
     }
