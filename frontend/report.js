@@ -186,22 +186,6 @@ function updateDataList(data) {
     updateList.push(data);
 }
 const updateList = [];
-const apiUrl = 'https://fie5mxoea4.execute-api.ap-south-1.amazonaws.com/prod';
-var response = {}
-
-// Fetch data from the API
-fetch(apiUrl, {
-    headers: {
-        'x-api-key': 'iRhRWA3DDk2nnFBVfMQjC5wKEZ1F875s7HBCP9pc',
-        'Content-Type': 'application/json'
-    }
-})
-    .then(response => response.json())
-    .then(data => console.log("Ignoring Server side data loading due to data miss match, call the function displayData(data) to load actual server response!",data))
-    .catch(error => {
-        console.error('Error fetching data:', error);
-    });
-
 sampleData = [{
     "id": 1,
     "updated_time": "2024-08-01T12:34:56Z",
