@@ -44,17 +44,8 @@ def get_records(path_params):
         print(f"{len(item)} Records fetched successfully")
         cleaned_up = clean_up_unwanted_fields(item)
     # Return the response
-    print("SUCCESS: Sending Response")
     print(cleaned_up)
-    return {
-        'statusCode': 200,
-        'headers': {
-            'Access-Control-Allow-Headers': 'Content-Type',
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'OPTIONS,POST,GET'
-        },        
-        'body': cleaned_up
-    } 
+    return cleaned_up
 
 # Function to add records into DB
 def add_records(request_body):
@@ -149,21 +140,22 @@ def lambda_handler(event, context):
     if http_method != 'GET':
         # Get the request body (if any)
         requestbody = event.get('body', '')
+        print(requestbody)
         #request_body = multiparttojson(requestbody)
         request_body = json.loads(requestbody)
 
         request_body['id'] = str(uuid.uuid4())
         request_body['user_details'] = x_forwarded_for
         request_body['updated_time'] = current_datetime_ist
-        request_body['up_vote'] = 0
-        request_body['down_vote'] = 0
+        request_body['up_vote'] = "0"
+        request_body['down_vote'] = "0"
         request_body['prev_status'] = ""
-        request_body['prev_counter'] = 0
+        request_body['prev_counter'] = "0"
         print(f"request_body: {request_body}")
     
     # Perform the requested operation based on the HTTP method
     if http_method == 'GET':
-        get_records(path_params)
+        item = get_records(path_params)
     elif http_method == 'POST':
         add_records(request_body)
     elif http_method == 'PUT':

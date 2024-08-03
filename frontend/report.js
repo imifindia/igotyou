@@ -193,12 +193,11 @@ async function fetchReportData() {
         const apiKey = 'iRhRWA3DDk2nnFBVfMQjC5wKEZ1F875s7HBCP9pc';
 
         const api_response = await fetch(apiUrl, {
-        method: 'POST',
+        method: 'GET',
         headers: {
           'x-api-key': apiKey,
           'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(item),
+        }
         });
         if (api_response.ok) {
         if (onCompleted) {
