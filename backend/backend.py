@@ -21,7 +21,7 @@ now_ist = datetime.now(ist)
 current_datetime_ist = now_ist.strftime("%Y-%m-%dT%H:%M:%S")
 
 # List of fields which neednt be sent back in the get API call
-unwanted_fields = ['id', 'user_details']
+unwanted_fields = ['id', 'user_details','history']
 
 def clean_up_unwanted_fields(items):
     # Logic to remove unwanted fields from the item
@@ -72,6 +72,11 @@ def add_records(request_body):
         person['down_vote'] = "0"
         person['prev_status'] = ""
         person['prev_counter'] = "0"
+        person['history']=[]
+        person["updated_by"] = {}
+        person["updated_by"]["name"] = ""
+        person["updated_by"]["place"] = ""
+        person["updated_by"]["phone"] = ""      
         # Insert into Person Details table
         persons_table.put_item(Item=person)
         print(f"Person Details added successfully {person}")
@@ -82,13 +87,42 @@ def add_records(request_body):
     print(f"Report Details added successfully {request_body}")
 
     #item = request_body
-    print("Detailed captured successfully")
+    print("Details captured successfully")
 
 # Function to update records in the DB
-def update_records(path_params, request_body):
-    if 'id' in path_params:
+def update_records(query_params, request_body, x_forwarded_for):
+    if 'person' in query_params:
+        print(request_body['id'])
+        # Fetch a specific person details from person table
+        person_response = persons_table.get_item(Key={'id': request_body['id']})
+        print(person_response)
+        person_details = person_response.get('Item')
+        print(f"Updating Person : {person_details['id']}")
+        # Create a copy of person_details without the "history" key
+        person_details_copy = dict(person_details)
+        del person_details_copy["history"]
+
+        # Append the copy to the history list
+        person_details["history"].append(person_details_copy)
+        # update the columns up_vote, down_vote, prev_status, pre_counter in persons table
+        person_details["updated_time"] = current_datetime_ist
+        person_details['up_vote'] = str(int(request_body['up_vote'])+int(person_details['up_vote']))
+        person_details['down_vote'] = str(int(request_body['down_vote'])+int(person_details['down_vote']))
+        #Store the current status into previous status field
+        person_details['prev_status'] = person_details['status']
+
+        person_details['status'] = request_body['status']
+        person_details['prev_counter'] = str(int(person_details['up_vote'])-int(person_details['down_vote']))
+        person_details["updated_by"]["x_forwarded_for"] = x_forwarded_for
+        person_details["updated_by"]["name"] = request_body['updated_by'].get("name","")
+        person_details["updated_by"]["place"] = request_body['updated_by'].get("place","")
+        person_details["updated_by"]["phone"] = request_body['updated_by'].get("phone","")
+        persons_table.put_item(Item=person_details)
+        print(f"Person Details updated successfully {person_details}")
+
+    elif 'id' in query_params:
         # Update an existing item
-        table.put_item(Item={**request_body, 'id': path_params['id']})
+        table.put_item(Item={**request_body, 'id': query_params['id']})
         print("Details updated successfully")
 
     else:
@@ -165,7 +199,12 @@ def lambda_handler(event, context):
     request_body = ""
     item = ""
     status_message = ""
-    if http_method != 'GET':
+
+    # Perform the requested operation based on the HTTP method
+    if http_method == 'GET':
+        print("Inside Get")
+        item = get_records(path_params, query_params)
+    elif http_method == 'POST':
         # Get the request body (if any)
         requestbody = event.get('body', '')
         print(requestbody)
@@ -175,16 +214,19 @@ def lambda_handler(event, context):
         request_body['id'] = str(uuid.uuid4())
         request_body['user_details'] = x_forwarded_for
         request_body['updated_time'] = current_datetime_ist
-        print(f"request_body: {request_body}")
-    
-    # Perform the requested operation based on the HTTP method
-    if http_method == 'GET':
-        item = get_records(path_params, query_params)
-    elif http_method == 'POST':
+        print(f"request_body: {request_body}")        
+        print("Inside Post")
         add_records(request_body)
     elif http_method == 'PUT':
-        update_records(path_params, request_body)
+        # Get the request body (if any)
+        requestbody = event.get('body', '')
+        print(requestbody)
+        #request_body = multiparttojson(requestbody)
+        request_body = json.loads(requestbody)
+        print("Inside Put")
+        update_records(query_params, request_body, x_forwarded_for)
     elif http_method == 'DELETE':
+        print("Inside Delete")
         # Delete Skipped for now
         print("Delete Skipped")
         #delete_records(path_params, request_body)
