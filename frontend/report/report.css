@@ -1,0 +1,41 @@
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th,
+td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+.table-responsive {
+    max-height: 500px; /* Set your desired max height */
+    overflow-y: auto; /* Enable vertical scrolling within the container */
+}
+
+.table-responsive::-webkit-scrollbar {
+    display: none; /* Hide the scrollbar */
+}
+
+.table-responsive {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+/*
+ * Custom CSS
+ */
+
+:root {
+    --bs-body-bg: var(--bs-gray-100);
+}
+
+.vote {
+    font-size: 18px;
+    font-weight: bold;
+}
