@@ -394,6 +394,6 @@ sampleData = [{
     "prev_counter": "10"
 }];
 
-displayData(sampleData);
+// displayData(sampleData);
 
-// window.onload = fetchReportData();   
+window.onload = fetchReportData();   
