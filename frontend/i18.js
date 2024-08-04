@@ -1,5 +1,3 @@
-
-
 // Detect user language and apply.
 document.addEventListener('DOMContentLoaded', function () {
     i18next
@@ -8,23 +6,27 @@ document.addEventListener('DOMContentLoaded', function () {
         .init({
             fallbackLng: 'en',
             backend: {
-                loadPath: '/locales/{{lng}}.json'
+                loadPath: 'locales/{{lng}}.json'
             },
             detection: {
                 order: ['navigator'],
             }
         }, function (err, t) {
-            if (err) {
-                return console.error(err);
-            }
-
+            // Apply text.
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 var key = el.getAttribute('data-i18n');
                 var text = i18next.t(key);
-                console.log(key, text)
                 el.textContent = text;
             });
 
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                var key = el.getAttribute('data-i18n-placeholder');
+                var text = i18next.t(key);
+                el.placeholder = text;
+            });
+
+            // Update UI.
             document.getElementById('loading').style.display = 'none';
+            addPersonCard();
         });
 })

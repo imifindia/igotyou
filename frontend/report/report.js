@@ -21,7 +21,7 @@ function displayData(apiData) {
         { index: 3, title: "False I don't Agree", variable: "down_vote", cellgenerator: "voteGenerator" },
         { index: 4, title: "Name", variable: "name" },
         { index: 5, title: "Nickname", variable: "nickname" },
-        { index: 6, title: "Family Name", variable: "family_name" },
+        { index: 6, title: "Family Name", variable: "familyName" },
         { index: 7, title: "Age", variable: "age" },
         { index: 8, title: "Sex", variable: "sex" },
         { index: 9, title: "Place", variable: "place" },
@@ -224,7 +224,7 @@ function datePipe(date) {
 async function fetchReportData() {
     try {
 
-        const apiUrl = 'https://fie5mxoea4.execute-api.ap-south-1.amazonaws.com/prod';
+        const apiUrl = 'https://fie5mxoea4.execute-api.ap-south-1.amazonaws.com/prod?persons=true';
         const apiKey = 'iRhRWA3DDk2nnFBVfMQjC5wKEZ1F875s7HBCP9pc';
 
         const api_response = await fetch(apiUrl, {
