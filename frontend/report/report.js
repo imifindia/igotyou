@@ -250,8 +250,8 @@ document.addEventListener('DOMContentLoaded', function () {
     if (storedVal && storedVal.name) {
         console.log('Using stored Value', storedVal);
         whoisForm.elements['name'].value = storedVal.name;
-        whoisForm.elements['place'].value = storedVal.place;
-        whoisForm.elements['contact'].value = storedVal.contact;
+        whoisForm.elements['place'].value = storedVal.place? storedVal.place : "";
+        whoisForm.elements['contact'].value = storedVal.contact? storedVal.contact : "";
     }
 
     whoisForm.addEventListener('submit', function (event) {
@@ -321,7 +321,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             try {
 
-                const apiUrl = 'https://fie5mxoea4.execute-api.ap-south-1.amazonaws.com/prod?person=true';
+                const apiUrl = 'https://fie5mxoea4.execute-api.ap-south-1.amazonaws.com/prod?persons=true';
                 const apiKey = 'iRhRWA3DDk2nnFBVfMQjC5wKEZ1F875s7HBCP9pc';
 
                 fetch(apiUrl, {
