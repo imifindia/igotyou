@@ -246,9 +246,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const whoisForm = document.getElementById('whoisForm');
     const maxLength = 50; // Example max length
     var storedVal = JSON.parse(localStorage.getItem('whoami'));
-    console.log('Using stored Value',storedVal);
+    console.log('Using stored Value', storedVal);
     if (storedVal && storedVal.name) {
-        console.log('Using stored Value',storedVal);
+        console.log('Using stored Value', storedVal);
         whoisForm.elements['name'].value = storedVal.name;
         whoisForm.elements['place'].value = storedVal.place;
         whoisForm.elements['contact'].value = storedVal.contact;
@@ -309,10 +309,11 @@ document.addEventListener('DOMContentLoaded', function () {
             const formData = {
                 name: name.value,
                 place: place.value,
-                contact: contact.value,
+                phone: contact.value,
                 notes: notes.value
             };
             currUpdatingEntry.updated_by = formData;
+            prepareDataForUpdate(currUpdatingEntry)
             console.log(currUpdatingEntry);
 
             localStorage.setItem('whoami', JSON.stringify(formData));
@@ -349,6 +350,21 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
+function prepareDataForUpdate(person) {
+    delete person.place;
+    delete person.prev_counter;
+    delete person.prev_status;
+    delete person.report_id;
+    delete person.sex;
+    delete person.age;
+    delete person.updated_time;
+    delete person.x_forwarded_for;
+    if(!person.contactNumber){
+        person.contactNumber = "";
+    }
+
+}
+
 const updateList = [];
 sampleData = [{
     "id": "sadsdsad3r2432dfdasfafafasfasfasfasfa",
@@ -357,13 +373,14 @@ sampleData = [{
     "down_vote": "3",
     "name": "John Doe",
     "nickname": "Johnny",
-    "family_name": "Doe",
+    "familyName": "Doe",
     "age": "28",
     "sex": "Male",
     "place": "New York",
     "status": "Injured",
     "prev_status": "Inactive",
-    "prev_counter": "10"
+    "prev_counter": "10",
+    "contactNumber": "3456765432"
 }, {
     "id": "s32dsdsad3r243sfdfsddasfafafasfasfasfasfa",
     "updated_time": "2024-08-01T12:34:56Z",
@@ -371,13 +388,14 @@ sampleData = [{
     "down_vote": "10",
     "name": "John Doe",
     "nickname": "Johnny",
-    "family_name": "Doe",
+    "familyName": "Doe",
     "age": "28",
     "sex": "Male",
     "place": "New York",
     "status": "Rescued",
     "prev_status": "Inactive",
-    "prev_counter": "10"
+    "prev_counter": "10",
+    "contactNumber": "3456765432"
 }, {
     "id": "4353dsdsad3r243sfdfsddasfafafasfasfasfasfa",
     "updated_time": "2024-08-01T12:34:56Z",
@@ -385,13 +403,15 @@ sampleData = [{
     "down_vote": "0",
     "name": "John Doe",
     "nickname": "Johnny",
-    "family_name": "Doe",
+    "familyName": "Doe",
     "age": "28",
     "sex": "Male",
     "place": "New York",
     "status": "Deceased",
     "prev_status": "Inactive",
-    "prev_counter": "10"
+    "prev_counter": "10",
+    "contactNumber": "3456765432"
+    
 }];
 
 // displayData(sampleData);
