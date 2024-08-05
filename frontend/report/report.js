@@ -325,7 +325,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const apiKey = 'iRhRWA3DDk2nnFBVfMQjC5wKEZ1F875s7HBCP9pc';
 
                 fetch(apiUrl, {
-                    method: 'POST',
+                    method: 'PUT',
                     headers: {
                         'x-api-key': apiKey,
                         'Content-Type': 'application/json'
