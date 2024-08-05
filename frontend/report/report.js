@@ -250,8 +250,8 @@ document.addEventListener('DOMContentLoaded', function () {
     if (storedVal && storedVal.name) {
         console.log('Using stored Value', storedVal);
         whoisForm.elements['name'].value = storedVal.name;
-        whoisForm.elements['place'].value = storedVal.place;
-        whoisForm.elements['contact'].value = storedVal.contact;
+        whoisForm.elements['place'].value = storedVal.place? storedVal.place : "";
+        whoisForm.elements['contact'].value = storedVal.contact? storedVal.contact : "";
     }
 
     whoisForm.addEventListener('submit', function (event) {
