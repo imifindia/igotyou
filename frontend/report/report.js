@@ -329,7 +329,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         'x-api-key': apiKey,
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(formData)
+                    body: JSON.stringify(currUpdatingEntry)
                 })
                     .then(response => response.json())
                     .then(data => {
