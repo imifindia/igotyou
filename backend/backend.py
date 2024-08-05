@@ -21,7 +21,7 @@ now_ist = datetime.now(ist)
 current_datetime_ist = now_ist.strftime("%Y-%m-%dT%H:%M:%S")
 
 # List of fields which neednt be sent back in the get API call
-unwanted_fields = ['id', 'user_details','history']
+unwanted_fields = ['user_details','history']
 
 def clean_up_unwanted_fields(items):
     # Logic to remove unwanted fields from the item
@@ -246,7 +246,7 @@ def lambda_handler(event, context):
         'headers': {
             'Access-Control-Allow-Headers': 'Content-Type',
             'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'OPTIONS,POST,GET',
+            'Access-Control-Allow-Methods': 'OPTIONS,POST,GET,PUT',
         },        
         'body': json.dumps(item)
     }
