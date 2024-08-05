@@ -321,7 +321,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             try {
 
-                const apiUrl = 'https://fie5mxoea4.execute-api.ap-south-1.amazonaws.com/prod?person=true';
+                const apiUrl = 'https://fie5mxoea4.execute-api.ap-south-1.amazonaws.com/prod?persons=true';
                 const apiKey = 'iRhRWA3DDk2nnFBVfMQjC5wKEZ1F875s7HBCP9pc';
 
                 fetch(apiUrl, {
