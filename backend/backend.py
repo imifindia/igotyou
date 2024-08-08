@@ -21,7 +21,7 @@ now_ist = datetime.now(ist)
 current_datetime_ist = now_ist.strftime("%Y-%m-%dT%H:%M:%S")
 
 # List of fields which neednt be sent back in the get API call
-unwanted_fields = ['id', 'user_details','history']
+unwanted_fields = ['user_details','history']
 
 def clean_up_unwanted_fields(items):
     # Logic to remove unwanted fields from the item
@@ -48,6 +48,21 @@ def get_records(path_params, query_params):
         # Return the response
         print(cleaned_up)
         return cleaned_up    
+    elif query_params is not None and 'search' in query_params:
+        # Perform a global search
+        search_term = query_params['search'].lower()
+        response = table.scan()
+        items = response.get('Items', [])
+        matching_items = []
+        for item in items:
+            for key, value in item.items():
+                if isinstance(value, str) and search_term in value.lower():
+                    matching_items.append(item)
+                    break
+        cleaned_up = clean_up_unwanted_fields(matching_items)
+        print(f"{len(cleaned_up)} Records matched search term '{search_term}'")
+        print(cleaned_up)
+        return cleaned_up
     else:
         # Scan the table for all items
         response = table.scan()
@@ -245,8 +260,8 @@ def lambda_handler(event, context):
         'statusCode': 200,
         'headers': {
             'Access-Control-Allow-Headers': 'Content-Type',
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'OPTIONS,POST,GET',
+            'Access-Control-Allow-Origin': 'https://imifindia.github.io',
+            'Access-Control-Allow-Methods': 'OPTIONS,POST,GET,PUT',
         },        
         'body': json.dumps(item)
     }
