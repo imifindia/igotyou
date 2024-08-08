@@ -228,7 +228,7 @@ function datePipe(date) {
 
 async function fetchReportData(searchQuery) {
     try {
-        var apiUrl = 'https://fie5mxoea4.execute-api.ap-south-1.amazonaws.com/prod?persons=true';
+        let apiUrl = 'https://fie5mxoea4.execute-api.ap-south-1.amazonaws.com/prod?persons=true';
         if (searchQuery) {
             apiUrl += '&search=' + searchQuery;
         }
