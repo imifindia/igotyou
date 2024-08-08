@@ -96,11 +96,12 @@ document.addEventListener('DOMContentLoaded', function () {
             editable: true,
             resizable: true,
             cellStyle: { textAlign: 'center' }
-        }
+        },
+        onCellValueChanged: onCellValueChanged
     };
 
     const eGridDiv = document.querySelector('#myGrid');
-    new agGrid.createGrid(eGridDiv, gridOptions);
+    const api = new agGrid.createGrid(eGridDiv, gridOptions);
 
     function numberParser(params) {
         const newValue = params.newValue;
@@ -120,17 +121,49 @@ document.addEventListener('DOMContentLoaded', function () {
         return `${day}/${month}/${year} ${hours}:${minutes}`;
     }
 
+    // Function to handle cell value changes
+    function onCellValueChanged(event) {
+        event.data.edited = true;
+        console.log('Data after change is', event.data);
+    }
+
+
+    // Function to get edited entries
+    function getEditedEntries() {
+        const editedEntries = [];
+        api.forEachNode(function (node) {
+            if (node.data.edited) {
+                editedEntries.push(node.data);
+            }
+        });
+        console.log('Edited Entries:', editedEntries);
+        return editedEntries;
+    }
+
+    const saveButton = document.getElementById('saveButton');
+    saveButton.addEventListener('click', function () {
+        const whoisModal = new bootstrap.Modal(document.getElementById('whoisModal'));
+        whoisModal.show();
+    });
+
     // Initialize Who Is Form
-
-    const form = document.getElementById('whoisForm');
+    const whoisForm = document.getElementById('whoisForm');
     const maxLength = 50; // Example max length
+    var storedVal = JSON.parse(localStorage.getItem('whoami'));
+    console.log('Using stored Value', storedVal);
+    if (storedVal && storedVal.name) {
+        console.log('Using stored Value', storedVal);
+        whoisForm.elements['name'].value = storedVal.name;
+        whoisForm.elements['place'].value = storedVal.place ? storedVal.place : "";
+        whoisForm.elements['phone'].value = storedVal.phone ? storedVal.phone : "";
+    }
 
-    form.addEventListener('submit', function (event) {
+    whoisForm.addEventListener('submit', function (event) {
         let isValid = true;
-        const name = form.elements['name'];
-        const place = form.elements['place'];
-        const contact = form.elements['contact'];
-        const notes = form.elements['notes'];
+        const name = whoisForm.elements['name'];
+        const place = whoisForm.elements['place'];
+        const phone = whoisForm.elements['phone'];
+        const notes = whoisForm.elements['notes'];
 
         // Clear previous error messages
         document.querySelectorAll('.invalid-feedback').forEach(el => el.textContent = '');
@@ -153,14 +186,14 @@ document.addEventListener('DOMContentLoaded', function () {
             place.classList.remove('is-invalid');
         }
 
-        // Validate contact
+        // Validate phone
         const contactPattern = /^(\+\d{1,3}[- ]?)?\d{10}$/;
-        if (!contact.value || contact.value.length > maxLength || !contactPattern.test(contact.value)) {
+        if (!phone.value || phone.value.length > maxLength || !contactPattern.test(phone.value)) {
             isValid = false;
-            contact.classList.add('is-invalid');
+            phone.classList.add('is-invalid');
             document.getElementById('contactError').textContent = `Please enter a valid phone number (Country code accepted).`;
         } else {
-            contact.classList.remove('is-invalid');
+            phone.classList.remove('is-invalid');
         }
 
         // Validate notes
@@ -180,34 +213,46 @@ document.addEventListener('DOMContentLoaded', function () {
             const formData = {
                 name: name.value,
                 place: place.value,
-                contact: contact.value,
+                phone: phone.value,
                 notes: notes.value
             };
-            currUpdatingEntry.updated_by = formData;
-            console.log(currUpdatingEntry);
+            const editedEntries = getEditedEntries();
+            editedEntries.forEach(entry => {
+                entry.updated_by = formData;
+                prepareDataForUpdate(entry)
+                console.log(entry);
+            })
+
+            localStorage.setItem('whoami', JSON.stringify(formData));
             // Submit to API
 
             try {
 
-                const apiUrl = 'https://fie5mxoea4.execute-api.ap-south-1.amazonaws.com/prod';
+                const apiUrl = 'https://fie5mxoea4.execute-api.ap-south-1.amazonaws.com/prod?persons=true';
                 const apiKey = 'iRhRWA3DDk2nnFBVfMQjC5wKEZ1F875s7HBCP9pc';
 
                 fetch(apiUrl, {
-                    method: 'POST',
+                    method: 'PUT',
                     headers: {
                         'x-api-key': apiKey,
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(formData)
+                    body: JSON.stringify(editedEntries)
                 })
                     .then(response => response.json())
                     .then(data => {
                         console.log('Success:', data);
+                        // Close Modal
+                        var myModal = bootstrap.Modal.getInstance(document.getElementById('whoisModal'));
+                        myModal.hide();
                         // Handle success (e.g., display a success message, redirect, etc.)
                     })
                     .catch((error) => {
                         console.error('Error:', error);
-                        // Handle error (e.g., display an error message)
+                        alert("Error updating the data. Please try again later.");
+
+                        var myModal = bootstrap.Modal.getInstance(document.getElementById('whoisModal'));
+                        myModal.hide();
                     });
 
                 event.preventDefault(); // Prevent default form submission
@@ -218,6 +263,8 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
 });
+
+
 
 function getCellStyle(status) {
     switch (status) {
@@ -452,120 +499,6 @@ async function fetchReportData(searchQuery) {
     }
 }
 
-// Modal Save action
-document.addEventListener('DOMContentLoaded', function () {
-    const whoisForm = document.getElementById('whoisForm');
-    const maxLength = 50; // Example max length
-    var storedVal = JSON.parse(localStorage.getItem('whoami'));
-    console.log('Using stored Value', storedVal);
-    if (storedVal && storedVal.name) {
-        console.log('Using stored Value', storedVal);
-        whoisForm.elements['name'].value = storedVal.name;
-        whoisForm.elements['place'].value = storedVal.place ? storedVal.place : "";
-        whoisForm.elements['phone'].value = storedVal.phone ? storedVal.phone : "";
-    }
-
-    whoisForm.addEventListener('submit', function (event) {
-        let isValid = true;
-        const name = whoisForm.elements['name'];
-        const place = whoisForm.elements['place'];
-        const phone = whoisForm.elements['phone'];
-        const notes = whoisForm.elements['notes'];
-
-        // Clear previous error messages
-        document.querySelectorAll('.invalid-feedback').forEach(el => el.textContent = '');
-
-        // Validate name
-        if (!name.value || name.value.length > maxLength) {
-            isValid = false;
-            name.classList.add('is-invalid');
-            document.getElementById('nameError').textContent = `Name is required and must be less than ${maxLength} characters.`;
-        } else {
-            name.classList.remove('is-invalid');
-        }
-
-        // Validate place
-        if (!place.value || place.value.length > maxLength) {
-            isValid = false;
-            place.classList.add('is-invalid');
-            document.getElementById('placeError').textContent = `Place is required and must be less than ${maxLength} characters.`;
-        } else {
-            place.classList.remove('is-invalid');
-        }
-
-        // Validate phone
-        const contactPattern = /^(\+\d{1,3}[- ]?)?\d{10}$/;
-        if (!phone.value || phone.value.length > maxLength || !contactPattern.test(phone.value)) {
-            isValid = false;
-            phone.classList.add('is-invalid');
-            document.getElementById('contactError').textContent = `Please enter a valid phone number (Country code accepted).`;
-        } else {
-            phone.classList.remove('is-invalid');
-        }
-
-        // Validate notes
-        if (notes.value && notes.value.length > maxLength) {
-            isValid = false;
-            notes.classList.add('is-invalid');
-            document.getElementById('notesError').textContent = `Note must be less than ${maxLength} characters.`;
-        } else {
-            place.classList.remove('is-invalid');
-        }
-
-
-        if (!isValid) {
-            event.preventDefault(); // Prevent form submission
-        } else {
-            // Read form values
-            const formData = {
-                name: name.value,
-                place: place.value,
-                phone: phone.value,
-                notes: notes.value
-            };
-            currUpdatingEntry.updated_by = formData;
-            prepareDataForUpdate(currUpdatingEntry)
-            console.log(currUpdatingEntry);
-
-            localStorage.setItem('whoami', JSON.stringify(formData));
-            // Submit to API
-
-            try {
-
-                const apiUrl = 'https://fie5mxoea4.execute-api.ap-south-1.amazonaws.com/prod?persons=true';
-                const apiKey = 'iRhRWA3DDk2nnFBVfMQjC5wKEZ1F875s7HBCP9pc';
-
-                fetch(apiUrl, {
-                    method: 'PUT',
-                    headers: {
-                        'x-api-key': apiKey,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(currUpdatingEntry)
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log('Success:', data);
-                        // Close Modal
-                        var myModal = bootstrap.Modal.getInstance(document.getElementById('whoisModal'));
-                        myModal.hide();
-                        // Handle success (e.g., display a success message, redirect, etc.)
-                    })
-                    .catch((error) => {
-                        console.error('Error:', error);
-                        alert("Error updating the data. Please try again later.");
-
-                        var myModal = bootstrap.Modal.getInstance(document.getElementById('whoisModal'));
-                        myModal.hide();
-                    });
-
-                event.preventDefault(); // Prevent default form submission
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        }
-    });
-});
 
 function prepareDataForUpdate(person) {
     delete person.place;
@@ -576,6 +509,7 @@ function prepareDataForUpdate(person) {
     delete person.age;
     delete person.updated_time;
     delete person.x_forwarded_for;
+    delete person.edited;
     if (!person.contactNumber) {
         person.contactNumber = "";
     }
