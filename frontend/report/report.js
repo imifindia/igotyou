@@ -16,18 +16,18 @@ function displayData(apiData) {
     data = [...apiData];
     // Populate the table headers
     const columnDef = [
-        { index: 1, title: "Date & Time", variable: "updated_time", pipe: "date" },
-        { index: 2, title: "True I Agree", variable: "up_vote", cellgenerator: "voteGenerator" },
-        { index: 3, title: "False I don't Agree", variable: "down_vote", cellgenerator: "voteGenerator" },
-        { index: 4, title: "Name", variable: "name" },
-        { index: 5, title: "Nickname", variable: "nickname" },
-        { index: 6, title: "Family Name", variable: "familyName" },
-        { index: 7, title: "Age", variable: "age" },
-        { index: 8, title: "Sex", variable: "sex" },
-        { index: 9, title: "Place", variable: "place" },
-        { index: 10, title: "Status", variable: "status", cellgenerator: "statusGenerator" },
-        { index: 11, title: "Prev Status", variable: "prev_status" },
-        { index: 12, title: "Prev Counters", variable: "prev_counter" }
+        { index: 1, title: "True I Agree", variable: "up_vote", cellgenerator: "voteGenerator" },
+        { index: 2, title: "False I don't Agree", variable: "down_vote", cellgenerator: "voteGenerator" },
+        { index: 3, title: "Name", variable: "name" },
+        { index: 4, title: "Nickname", variable: "nickname" },
+        { index: 5, title: "Family Name", variable: "familyName" },
+        { index: 6, title: "Age", variable: "age" },
+        { index: 7, title: "Sex", variable: "sex" },
+        { index: 8, title: "Place", variable: "place" },
+        { index: 9, title: "Status", variable: "status", cellgenerator: "statusGenerator" },
+        { index: 10, title: "Prev Status", variable: "prev_status" },
+        { index: 11, title: "Prev Counters", variable: "prev_counter" },
+        { index: 12, title: "Date & Time", variable: "updated_time", pipe: "date" }
     ];
     const headerRow = document.createElement('tr');
     for (i = 0; i < columnDef.length; i++) {
@@ -221,9 +221,11 @@ function datePipe(date) {
     return new Intl.DateTimeFormat('en-GB', options).format(date);
 }
 
-async function fetchReportData() {
+async function fetchReportData(searchQuery) {
     try {
-
+        if(searchQuery){
+            const apiUrl = 'https://fie5mxoea4.execute-api.ap-south-1.amazonaws.com/prod?persons=true&search=' + searchQuery;
+        }
         const apiUrl = 'https://fie5mxoea4.execute-api.ap-south-1.amazonaws.com/prod?persons=true';
         const apiKey = 'iRhRWA3DDk2nnFBVfMQjC5wKEZ1F875s7HBCP9pc';
 
@@ -250,15 +252,15 @@ document.addEventListener('DOMContentLoaded', function () {
     if (storedVal && storedVal.name) {
         console.log('Using stored Value', storedVal);
         whoisForm.elements['name'].value = storedVal.name;
-        whoisForm.elements['place'].value = storedVal.place? storedVal.place : "";
-        whoisForm.elements['contact'].value = storedVal.contact? storedVal.contact : "";
+        whoisForm.elements['place'].value = storedVal.place ? storedVal.place : "";
+        whoisForm.elements['phone'].value = storedVal.phone ? storedVal.phone : "";
     }
 
     whoisForm.addEventListener('submit', function (event) {
         let isValid = true;
         const name = whoisForm.elements['name'];
         const place = whoisForm.elements['place'];
-        const contact = whoisForm.elements['contact'];
+        const phone = whoisForm.elements['phone'];
         const notes = whoisForm.elements['notes'];
 
         // Clear previous error messages
@@ -282,14 +284,14 @@ document.addEventListener('DOMContentLoaded', function () {
             place.classList.remove('is-invalid');
         }
 
-        // Validate contact
+        // Validate phone
         const contactPattern = /^(\+\d{1,3}[- ]?)?\d{10}$/;
-        if (!contact.value || contact.value.length > maxLength || !contactPattern.test(contact.value)) {
+        if (!phone.value || phone.value.length > maxLength || !contactPattern.test(phone.value)) {
             isValid = false;
-            contact.classList.add('is-invalid');
+            phone.classList.add('is-invalid');
             document.getElementById('contactError').textContent = `Please enter a valid phone number (Country code accepted).`;
         } else {
-            contact.classList.remove('is-invalid');
+            phone.classList.remove('is-invalid');
         }
 
         // Validate notes
@@ -309,7 +311,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const formData = {
                 name: name.value,
                 place: place.value,
-                phone: contact.value,
+                phone: phone.value,
                 notes: notes.value
             };
             currUpdatingEntry.updated_by = formData;
@@ -335,11 +337,17 @@ document.addEventListener('DOMContentLoaded', function () {
                     .then(response => response.json())
                     .then(data => {
                         console.log('Success:', data);
+                        // Close Modal
+                        var myModal = bootstrap.Modal.getInstance(document.getElementById('whoisModal'));
+                        myModal.hide();
                         // Handle success (e.g., display a success message, redirect, etc.)
                     })
                     .catch((error) => {
                         console.error('Error:', error);
-                        // Handle error (e.g., display an error message)
+                        alert("Error updating the data. Please try again later.");
+
+                        var myModal = bootstrap.Modal.getInstance(document.getElementById('whoisModal'));
+                        myModal.hide();
                     });
 
                 event.preventDefault(); // Prevent default form submission
@@ -359,61 +367,311 @@ function prepareDataForUpdate(person) {
     delete person.age;
     delete person.updated_time;
     delete person.x_forwarded_for;
-    if(!person.contactNumber){
+    if (!person.contactNumber) {
         person.contactNumber = "";
     }
 
 }
 
-const updateList = [];
-sampleData = [{
-    "id": "sadsdsad3r2432dfdasfafafasfasfasfasfa",
-    "updated_time": "2024-08-01T12:34:56Z",
-    "up_vote": "2",
-    "down_vote": "3",
-    "name": "John Doe",
-    "nickname": "Johnny",
-    "familyName": "Doe",
-    "age": "28",
-    "sex": "Male",
-    "place": "New York",
-    "status": "Injured",
-    "prev_status": "Inactive",
-    "prev_counter": "10",
-    "contactNumber": "3456765432"
-}, {
-    "id": "s32dsdsad3r243sfdfsddasfafafasfasfasfasfa",
-    "updated_time": "2024-08-01T12:34:56Z",
-    "up_vote": "25",
-    "down_vote": "10",
-    "name": "John Doe",
-    "nickname": "Johnny",
-    "familyName": "Doe",
-    "age": "28",
-    "sex": "Male",
-    "place": "New York",
-    "status": "Rescued",
-    "prev_status": "Inactive",
-    "prev_counter": "10",
-    "contactNumber": "3456765432"
-}, {
-    "id": "4353dsdsad3r243sfdfsddasfafafasfasfasfasfa",
-    "updated_time": "2024-08-01T12:34:56Z",
-    "up_vote": "2533",
-    "down_vote": "0",
-    "name": "John Doe",
-    "nickname": "Johnny",
-    "familyName": "Doe",
-    "age": "28",
-    "sex": "Male",
-    "place": "New York",
-    "status": "Deceased",
-    "prev_status": "Inactive",
-    "prev_counter": "10",
-    "contactNumber": "3456765432"
-    
-}];
+// Function to get nested values from an object using a string path
+function getValueByPath(obj, path) {
+    return path.split('.').reduce((acc, part) => acc && acc[part], obj);
+}
+// Function to convert data object to CSV format
+function downloadCSV(data) {
+    const csvRows = [];
+    // Choose the objects to be exported.
+    const headers = [{ heading: "ID", variable: "id" },
+    { heading: "Name", variable: "name" },
+    { heading: "Nickname", variable: "nickname" },
+    { heading: "Family Name", variable: "familyName" },
+    { heading: "Age", variable: "age" },
+    { heading: "Sex", variable: "sex" },
+    { heading: "Place", variable: "place" },
+    { heading: "Status", variable: "status" },
+    { heading: "Date ", variable: "updated_time" },
+    { heading: "Last Updated", variable: "updated_by.name" },
+    { heading: "Up Vote", variable: "up_vote" },
+    { heading: "Down Vote", variable: "down_vote" },
+    { heading: "Prev Status", variable: "prev_status" },
+    { heading: "Prev Counters", variable: "prev_counter" }
+    ]
+    csvRows.push(headers.map(header => header.heading).join(','));
 
-// displayData(sampleData);
+    for (const row of data) {
+        const values = headers.map(header => {
+            const value = getValueByPath(row, header.variable);
+            const escaped = ('' + value).replace(/"/g, '\\"');
+            return `"${escaped}"`;
+        });
+        csvRows.push(values.join(','));
+    }
+
+    return csvRows.join('\n');
+}
+
+// Function to trigger CSV download
+function exportToCSV(data) {
+    const csvData = downloadCSV(data);
+    const blob = new Blob([csvData], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.setAttribute('hidden', '');
+    a.setAttribute('href', url);
+    a.setAttribute('download', 'data.csv');
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+}
+
+// Add event listener to the button
+document.getElementById('exportButton').addEventListener('click', () => {
+    exportToCSV(data);
+});
+
+document.getElementById('searchForm').addEventListener('submit', function (event) {
+    event.preventDefault();
+    const searchTerm = document.getElementById('searchInput').value;
+    fetchReportData(searchTerm);
+});
+
+const updateList = [];
+sampleData = [
+    {
+        "updated_time": "2024-08-06T18:29:30",
+        "prev_status": "",
+        "up_vote": "0",
+        "contactNumber": "3243",
+        "status": "Healthy",
+        "familyName": "sdad",
+        "name": "dsada",
+        "prev_counter": "0",
+        "nickname": "sada",
+        "updated_by": {
+            "name": "",
+            "phone": "",
+            "place": ""
+        },
+        "down_vote": "0",
+        "id": "c75014e3-74c4-4493-b8d2-ed64d2018d32",
+        "report_id": "0597c82b-8925-49f8-881e-790e7c887934"
+    },
+    {
+        "updated_time": "2024-08-05T10:19:58",
+        "prev_status": "",
+        "up_vote": "0",
+        "contactNumber": "",
+        "status": "Healthy",
+        "familyName": "",
+        "name": "",
+        "prev_counter": "0",
+        "nickname": "",
+        "updated_by": {
+            "name": "",
+            "phone": "",
+            "place": ""
+        },
+        "down_vote": "0",
+        "id": "4a0e778a-16bb-45d8-b5e7-96e813ba4d21",
+        "report_id": "1040d848-cccb-42f6-a71c-79b8501b1336"
+    },
+    {
+        "prev_status": "Injured",
+        "updated_time": "2024-08-03T23:20:58",
+        "up_vote": "19",
+        "contactNumber": "3456765432",
+        "status": "Injured",
+        "sex": "male",
+        "familyName": "hgfds",
+        "name": "hgfds",
+        "prev_counter": "15",
+        "nickname": "gfd",
+        "updated_by": {
+            "name": "vijesh",
+            "place": "tvm",
+            "phone": "7543233233",
+            "x_forwarded_for": "127.0.0.1, 127.0.0.2"
+        },
+        "down_vote": "4",
+        "place": "tvm",
+        "id": "9f88c330-8111-4599-919d-a160dd36bf73",
+        "x_forwarded_for": "127.0.0.1, 127.0.0.2",
+        "report_id": "48ac1916-3e9d-47b2-b961-484d388ab671",
+        "age": "20"
+    },
+    {
+        "updated_time": "2024-08-05T08:01:33",
+        "prev_status": "",
+        "up_vote": "0",
+        "contactNumber": "6686866565",
+        "status": "Injured",
+        "familyName": "Yesdd",
+        "name": "Gorir",
+        "prev_counter": "0",
+        "nickname": "Dbsjs",
+        "updated_by": {
+            "name": "",
+            "phone": "",
+            "place": ""
+        },
+        "down_vote": "0",
+        "id": "ed4d03c3-4556-43d1-ac83-97c3235819b0",
+        "report_id": "da26959b-5d23-4be2-a738-b78f81507c84"
+    },
+    {
+        "updated_time": "2024-08-05T10:47:35",
+        "prev_status": "",
+        "up_vote": "0",
+        "contactNumber": "Eby Kakkooran Kuriakose",
+        "status": "Healthy",
+        "familyName": "Eby Kakkooran Kuriakose",
+        "name": "Eby Kakkooran Kuriakose",
+        "prev_counter": "0",
+        "nickname": "Eby Kakkooran Kuriakose",
+        "updated_by": {
+            "name": "",
+            "phone": "",
+            "place": ""
+        },
+        "down_vote": "0",
+        "id": "34d03e9e-f7a4-4c58-bd42-40b862302389",
+        "report_id": "bf42a7c8-4768-48d0-9ede-23353ef4905c"
+    },
+    {
+        "updated_time": "2024-08-05T10:19:58",
+        "prev_status": "",
+        "up_vote": "0",
+        "contactNumber": "9886190240",
+        "status": "Healthy",
+        "familyName": "Kakkooran",
+        "name": "Eby",
+        "prev_counter": "0",
+        "nickname": "Eby",
+        "updated_by": {
+            "name": "",
+            "phone": "",
+            "place": ""
+        },
+        "down_vote": "0",
+        "id": "77611a13-9065-42a2-ad17-eef9da48f202",
+        "report_id": "d6bb3b89-7b5b-440a-a0bd-355f72b4ad1c"
+    },
+    {
+        "updated_time": "2024-08-04T00:00:31",
+        "prev_status": "",
+        "up_vote": "0",
+        "contactNumber": "",
+        "status": "ആരോഗ്യമുള്ള",
+        "familyName": "",
+        "name": "",
+        "prev_counter": "0",
+        "nickname": "",
+        "updated_by": {
+            "name": "",
+            "phone": "",
+            "place": ""
+        },
+        "down_vote": "0",
+        "id": "9ef24d4d-bc69-4901-b0d5-5d5c2a7fb1f4",
+        "report_id": "d0ac7802-d15c-4e98-8f97-5c81f4d5a4c8"
+    },
+    {
+        "updated_time": "2024-08-06T18:29:30",
+        "prev_status": "",
+        "up_vote": "0",
+        "contactNumber": "234",
+        "status": "Healthy",
+        "familyName": "asda",
+        "name": "TEST",
+        "prev_counter": "0",
+        "nickname": "sda",
+        "updated_by": {
+            "name": "",
+            "phone": "",
+            "place": ""
+        },
+        "down_vote": "0",
+        "id": "6aeec631-b9de-4f1d-aaf5-92560fd4765b",
+        "report_id": "f0fe292c-a929-4b1c-8ea2-63220478e365"
+    },
+    {
+        "updated_time": "2024-08-05T18:25:37",
+        "prev_status": "",
+        "up_vote": "0",
+        "contactNumber": "0909009090",
+        "status": "Healthy",
+        "familyName": "TEST",
+        "name": "TEST",
+        "prev_counter": "0",
+        "nickname": "TEST",
+        "updated_by": {
+            "name": "",
+            "phone": "",
+            "place": ""
+        },
+        "down_vote": "0",
+        "id": "613d54ae-7b2d-450f-8b15-9fd08ac46387",
+        "report_id": "a091eb25-7bc4-458e-80b5-90427dbc6715"
+    },
+    {
+        "updated_time": "2024-08-03T23:22:30",
+        "prev_status": "",
+        "up_vote": "0",
+        "contactNumber": "3456765432",
+        "status": "injured",
+        "familyName": "hgfds",
+        "name": "hgfds",
+        "prev_counter": "0",
+        "nickname": "gfd",
+        "updated_by": {
+            "name": "",
+            "phone": "",
+            "place": ""
+        },
+        "down_vote": "0",
+        "id": "eba709c8-4cf1-44e2-b55e-1c658fb3d37b",
+        "report_id": "afe0fb1e-2089-4f80-8eb3-d35d06e0babb"
+    },
+    {
+        "updated_time": "2024-08-03T23:22:30",
+        "prev_status": "",
+        "up_vote": "0",
+        "contactNumber": "3456765432",
+        "status": "injured",
+        "familyName": "hgfds",
+        "name": "hgfds",
+        "prev_counter": "0",
+        "nickname": "gfd",
+        "updated_by": {
+            "name": "",
+            "phone": "",
+            "place": ""
+        },
+        "down_vote": "0",
+        "id": "6b2270cf-9905-4c4f-a3bd-02b22e133852",
+        "report_id": "516070e6-f609-4578-814a-3f16954ab5f3"
+    },
+    {
+        "updated_time": "2024-08-05T10:12:06",
+        "prev_status": "",
+        "up_vote": "0",
+        "contactNumber": "",
+        "status": "Healthy",
+        "familyName": "",
+        "name": "",
+        "prev_counter": "0",
+        "nickname": "",
+        "updated_by": {
+            "name": "",
+            "phone": "",
+            "place": ""
+        },
+        "down_vote": "0",
+        "id": "bb3ac89d-510f-46f7-9797-e1e35411cd00",
+        "report_id": "1b28302f-84d1-4950-ad88-3c2ddb56d07c"
+    }
+];
+
+displayData(sampleData);
 
 window.onload = fetchReportData();   
