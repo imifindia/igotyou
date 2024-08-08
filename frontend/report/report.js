@@ -223,9 +223,9 @@ function datePipe(date) {
 
 async function fetchReportData(searchQuery) {
     try {
-        var apiUrl = 'https://fie5mxoea4.execute-api.ap-south-1.amazonaws.com/prod?persons=true';
+        apiUrl = 'https://fie5mxoea4.execute-api.ap-south-1.amazonaws.com/prod?persons=true';
         if (searchQuery) {
-            const apiUrl = 'https://fie5mxoea4.execute-api.ap-south-1.amazonaws.com/prod?persons=true&search=' + searchQuery;
+            apiUrl = 'https://fie5mxoea4.execute-api.ap-south-1.amazonaws.com/prod?persons=true&search=' + searchQuery;
         }
         console.log("calling", apiUrl);
         const apiKey = 'iRhRWA3DDk2nnFBVfMQjC5wKEZ1F875s7HBCP9pc';
