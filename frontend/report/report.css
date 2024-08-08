@@ -6,6 +6,7 @@
 .container-fluid {
     padding-left: 50px !important;
     padding-right: 50px !important;
+    padding-top: 10px !important;
 }
 
 .vote {

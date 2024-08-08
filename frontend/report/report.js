@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function () {
         },
 
         {
-            title: "Prev Status", field: "prev_status",
+            title: "Prev Status", field: "prev_status", editable: false,
             cellClass: params => {
                 return "cell-" + getCellStyle(params.data.prev_status);
             },
@@ -67,13 +67,13 @@ document.addEventListener('DOMContentLoaded', function () {
         },
 
         {
-            title: "I Agree", field: "up_vote", cellRenderer: voteRenderer,
-            filter: false, editable: true
+            title: "I Agree", field: "up_vote", width: 100,
+            cellRenderer: voteRenderer, filter: false, editable: false
         },
 
         {
-            title: "I don't Agree", field: "down_vote", cellRenderer: voteRenderer,
-            filter: false, editable: false
+            title: "I don't Agree", field: "down_vote", width: 100,
+            cellRenderer: voteRenderer, filter: false, editable: false
         },
 
         // { title: "Prev Counters", field: "prev_counter" },
