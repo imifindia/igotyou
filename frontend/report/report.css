@@ -1,41 +1,52 @@
-table {
-    border-collapse: collapse;
-    width: 100%;
-}
 
-th,
-td {
-    padding: 8px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-}
-
-th {
-    background-color: #f2f2f2;
-}
-.table-responsive {
-    max-height: 500px; /* Set your desired max height */
-    overflow-y: auto; /* Enable vertical scrolling within the container */
-}
-
-.table-responsive::-webkit-scrollbar {
-    display: none; /* Hide the scrollbar */
-}
-
-.table-responsive {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
-}
 
 /*
  * Custom CSS
  */
-
-:root {
-    --bs-body-bg: var(--bs-gray-100);
+.container-fluid {
+    padding-left: 50px !important;
+    padding-right: 50px !important;
 }
 
 .vote {
     font-size: 18px;
     font-weight: bold;
+}
+
+.vote-svg {
+    padding-bottom: 2px;
+    height: 17px;
+
+}
+
+.cell-info {
+    background-color: #d1ecf1; /* Light blue background */
+    color: #0c5460; /* Dark blue text */
+    border: 1px solid #bee5eb; /* Light blue border */
+    border-radius: 4px; /* Optional: Add rounded corners */
+    font-weight: bold; /* Make the text bold */
+}
+
+.cell-success {
+    background-color: #d4edda; /* Light green background */
+    color: #155724; /* Dark green text */
+    border: 1px solid #c3e6cb; /* Light green border */
+    border-radius: 4px; /* Optional: Add rounded corners */
+    font-weight: bold; /* Make the text bold */
+}
+
+.cell-warning {
+    background-color: #fff3cd; /* Light yellow background */
+    color: #856404; /* Dark yellow text */
+    border: 1px solid #ffeeba; /* Light yellow border */
+    border-radius: 4px; /* Optional: Add rounded corners */
+    font-weight: bold; /* Make the text bold */
+}
+
+.cell-danger {
+    background-color: #f8d7da; /* Light red background */
+    color: #721c24; /* Dark red text */
+    border: 1px solid #f5c6cb; /* Light red border */
+    border-radius: 4px; /* Optional: Add rounded corners */
+    font-weight: bold; /* Make the text bold */
 }

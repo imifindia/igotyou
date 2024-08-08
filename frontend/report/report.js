@@ -9,69 +9,260 @@ const statusOptions = [
     { status: "Hospitalized", class: "warning" },
     { status: "Returned to Home", class: "success" }
 ];
+statusOptions.map(status => { status.status })
 var data;
 var currUpdatingEntry;
-// Function to display fetched JSON data
-function displayData(apiData) {    
-    const tableBody = document.querySelector('#dataTable tbody');
-    const tableHeader = document.querySelector('#dataTable thead');
 
-    // Clear the table body and header before adding new values
-    tableBody.innerHTML = '';
-    tableHeader.innerHTML = '';
-    data = [...apiData];
-    // Populate the table headers
-    const columnDef = [
-        { index: 1, title: "True I Agree", variable: "up_vote", cellgenerator: "voteGenerator" },
-        { index: 2, title: "False I don't Agree", variable: "down_vote", cellgenerator: "voteGenerator" },
-        { index: 3, title: "Name", variable: "name" },
-        { index: 4, title: "Nickname", variable: "nickname" },
-        { index: 5, title: "Family Name", variable: "familyName" },
-        { index: 6, title: "Age", variable: "age" },
-        { index: 7, title: "Sex", variable: "sex" },
-        { index: 8, title: "Place", variable: "place" },
-        { index: 9, title: "Status", variable: "status", cellgenerator: "statusGenerator" },
-        { index: 10, title: "Prev Status", variable: "prev_status" },
-        { index: 11, title: "Prev Counters", variable: "prev_counter" },
-        { index: 12, title: "Date & Time", variable: "updated_time", pipe: "date" }
+
+document.addEventListener('DOMContentLoaded', function () {
+    const columnDefs = [
+        {
+            title: "Name", field: "name", width: 200
+        },
+
+        {
+            title: "Nickname", field: "nickname", width: 150
+        },
+
+        {
+            title: "Family Name", field: "familyName", width: 250
+        },
+
+        {
+            title: "Age", field: "age", width: 80,
+            valueParser: numberParser
+        },
+
+        {
+            title: "Sex", field: "sex", width: 80,
+            cellEditor: 'agSelectCellEditor',
+            cellEditorParams: {
+                values: ["Male", "Female", "Other"]
+            },
+        },
+
+        {
+            title: "Place", field: "place"
+        },
+
+        {
+            title: "Status", field: "status", cellEditor: 'agSelectCellEditor', width: 150,
+
+            cellEditorParams: {
+                values: statusOptions.map(option => option.status)
+            },
+
+            cellClass: params => {
+                return "cell-" + getCellStyle(params.data.status);
+            },
+
+        },
+
+        {
+            title: "Prev Status", field: "prev_status",
+            cellClass: params => {
+                return "cell-" + getCellStyle(params.data.prev_status);
+            },
+
+        },
+
+        {
+            title: "I Agree", field: "up_vote", cellRenderer: voteRenderer,
+            filter: false, editable: true
+        },
+
+        {
+            title: "I don't Agree", field: "down_vote", cellRenderer: voteRenderer,
+            filter: false, editable: false
+        },
+
+        // { title: "Prev Counters", field: "prev_counter" },
+
+        {
+            title: "Date & Time", field: "updated_time", cellRenderer: dateRenderer,
+            editable: false
+        }
     ];
-    const headerRow = document.createElement('tr');
-    for (i = 0; i < columnDef.length; i++) {
-        const th = document.createElement('th');
-        th.textContent = columnDef[i].title;
-        th.setAttribute("scope", "col");
-        headerRow.appendChild(th);
+
+    const rowData = data;
+
+    const gridOptions = {
+        columnDefs: columnDefs,
+        rowData: rowData,
+        rowHeight: 50,
+        defaultColDef: {
+            sortable: true,
+            filter: true,
+            editable: true,
+            resizable: true,
+            cellStyle: { textAlign: 'center' }
+        }
+    };
+
+    const eGridDiv = document.querySelector('#myGrid');
+    new agGrid.createGrid(eGridDiv, gridOptions);
+
+    function numberParser(params) {
+        const newValue = params.newValue;
+        const parsedValue = parseInt(newValue);
+        return isNaN(parsedValue) ? null : parsedValue;
     }
-    tableHeader.appendChild(headerRow);
-    // Populate the table rows
-    data.forEach(item => {
-        const row = document.createElement('tr');
-        for (i = 0; i < columnDef.length; i++) {
-            const column = columnDef[i];
-            const cell = document.createElement('td');
-            if (column.cellgenerator) {
-                const cellData = {
-                    data: item,
-                    column: column,
-                    colIndex: i,
-                    isUpVote: column.variable == "up_vote"
-                }
-                cell.innerHTML = window[column.cellgenerator].apply(null, [cellData]);
-            } else {
-                value = item[column.variable];
-                if (value && column.pipe && column.pipe === 'date') {
-                    value = datePipe(value);
-                }
-                cell.textContent = value ? value : "NA";
+
+
+    function dateRenderer(params) {
+        const date = new Date(params.value);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const timezone = date.toTimeString().split(' ')[1];
+        return `${day}/${month}/${year} ${hours}:${minutes}`;
+    }
+
+    // Initialize Who Is Form
+
+    const form = document.getElementById('whoisForm');
+    const maxLength = 50; // Example max length
+
+    form.addEventListener('submit', function (event) {
+        let isValid = true;
+        const name = form.elements['name'];
+        const place = form.elements['place'];
+        const contact = form.elements['contact'];
+        const notes = form.elements['notes'];
+
+        // Clear previous error messages
+        document.querySelectorAll('.invalid-feedback').forEach(el => el.textContent = '');
+
+        // Validate name
+        if (!name.value || name.value.length > maxLength) {
+            isValid = false;
+            name.classList.add('is-invalid');
+            document.getElementById('nameError').textContent = `Name is required and must be less than ${maxLength} characters.`;
+        } else {
+            name.classList.remove('is-invalid');
+        }
+
+        // Validate place
+        if (!place.value || place.value.length > maxLength) {
+            isValid = false;
+            place.classList.add('is-invalid');
+            document.getElementById('placeError').textContent = `Place is required and must be less than ${maxLength} characters.`;
+        } else {
+            place.classList.remove('is-invalid');
+        }
+
+        // Validate contact
+        const contactPattern = /^(\+\d{1,3}[- ]?)?\d{10}$/;
+        if (!contact.value || contact.value.length > maxLength || !contactPattern.test(contact.value)) {
+            isValid = false;
+            contact.classList.add('is-invalid');
+            document.getElementById('contactError').textContent = `Please enter a valid phone number (Country code accepted).`;
+        } else {
+            contact.classList.remove('is-invalid');
+        }
+
+        // Validate notes
+        if (notes.value && notes.value.length > maxLength) {
+            isValid = false;
+            notes.classList.add('is-invalid');
+            document.getElementById('notesError').textContent = `Note must be less than ${maxLength} characters.`;
+        } else {
+            place.classList.remove('is-invalid');
+        }
+
+
+        if (!isValid) {
+            event.preventDefault(); // Prevent form submission
+        } else {
+            // Read form values
+            const formData = {
+                name: name.value,
+                place: place.value,
+                contact: contact.value,
+                notes: notes.value
+            };
+            currUpdatingEntry.updated_by = formData;
+            console.log(currUpdatingEntry);
+            // Submit to API
+
+            try {
+
+                const apiUrl = 'https://fie5mxoea4.execute-api.ap-south-1.amazonaws.com/prod';
+                const apiKey = 'iRhRWA3DDk2nnFBVfMQjC5wKEZ1F875s7HBCP9pc';
+
+                fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'x-api-key': apiKey,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Success:', data);
+                        // Handle success (e.g., display a success message, redirect, etc.)
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
+                        // Handle error (e.g., display an error message)
+                    });
+
+                event.preventDefault(); // Prevent default form submission
+            } catch (error) {
+                console.error('Error fetching data:', error);
             }
-            row.appendChild(cell);
-        };
-        tableBody.appendChild(row);
+        }
     });
 
+});
+
+function getCellStyle(status) {
+    switch (status) {
+        case "Injured":
+        case "Stranded":
+        case "Hospitalized":
+            return "warning";
+        case "Rescued":
+        case "Found":
+        case "Healthy":
+        case "Returned to Home":
+            return "success";
+        case "Deceased":
+            return "danger";
+        default:
+            return "";
+    }
 }
 
-history
+
+function voteRenderer(params) {
+    // console.log(params);
+    isUpVote = params.column.colId == "up_vote";
+    cellValue = params.data;
+    if (isUpVote) {
+        const up_vote = cellValue.up_vote ? cellValue.up_vote : 0;
+        cellValue.up_vote = up_vote;
+        thumpsUpSVG = "M6.956 1.745C7.021.81 7.908.087 8.864.325l.261.066c.463.116.874.456 1.012.965.22.816.533 2.511.062 4.51a10 10 0 0 1 .443-.051c.713-.065 1.669-.072 2.516.21.518.173.994.681 1.2 1.273.184.532.16 1.162-.234 1.733q.086.18.138.363c.077.27.113.567.113.856s-.036.586-.113.856c-.039.135-.09.273-.16.404.169.387.107.819-.003 1.148a3.2 3.2 0 0 1-.488.901c.054.152.076.312.076.465 0 .305-.089.625-.253.912C13.1 15.522 12.437 16 11.5 16H8c-.605 0-1.07-.081-1.466-.218a4.8 4.8 0 0 1-.97-.484l-.048-.03c-.504-.307-.999-.609-2.068-.722C2.682 14.464 2 13.846 2 13V9c0-.85.685-1.432 1.357-1.615.849-.232 1.574-.787 2.132-1.41.56-.627.914-1.28 1.039-1.639.199-.575.356-1.539.428-2.59z";
+        return '<button type="button" class="btn btn-sm btn-outline-success vote" id="upVote_' + cellValue.id + '" onclick="incrementVote(\'' + cellValue.id + '\')">' +
+            '<svg class="vote-svg" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-hand-thumbs-up-fill" viewBox="0 0 16 16">' +
+            '<path d="' + thumpsUpSVG + '"></path>' +
+            '</svg> <span>' + up_vote + '</span></button>';
+    } else {
+        down_vote = cellValue.down_vote ? cellValue.down_vote : 0;
+        cellValue.down_vote = down_vote;
+        thumpsDownSVG = "M6.956 14.534c.065.936.952 1.659 1.908 1.42l.261-.065a1.38 1.38 0 0 0 1.012-.965c.22-.816.533-2.512.062-4.51q.205.03.443.051c.713.065 1.669.071 2.516-.211.518-.173.994-.68 1.2-1.272a1.9 1.9 0 0 0-.234-1.734c.058-.118.103-.242.138-.362.077-.27.113-.568.113-.856 0-.29-.036-.586-.113-.857a2 2 0 0 0-.16-.403c.169-.387.107-.82-.003-1.149a3.2 3.2 0 0 0-.488-.9c.054-.153.076-.313.076-.465a1.86 1.86 0 0 0-.253-.912C13.1.757 12.437.28 11.5.28H8c-.605 0-1.07.08-1.466.217a4.8 4.8 0 0 0-.97.485l-.048.029c-.504.308-.999.61-2.068.723C2.682 1.815 2 2.434 2 3.279v4c0 .851.685 1.433 1.357 1.616.849.232 1.574.787 2.132 1.41.56.626.914 1.28 1.039 1.638.199.575.356 1.54.428 2.591";
+        return '<button type="button" class="btn btn-sm btn-outline-danger vote" id="downVote_' + cellValue.id + '" onclick="decrementVote(\'' + cellValue.id + '\')">' +
+            '<svg class="vote-svg" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-hand-thumbs-up-fill" viewBox="0 0 16 16">' +
+            '<path d="' + thumpsDownSVG + '"></path>' +
+            '</svg> <span>' + down_vote + '</span></button>';
+
+    }
+}
+
+
 // UpVote listner
 function incrementVote(id) {
     const val = data.find(value => value.id == id);
@@ -189,6 +380,18 @@ function statusGenerator(cellData) {
     return dd;
 }
 
+function statusBtnGenerator(cellData) {
+    const status = cellData.data.prev_status;
+    var index = statusOptions.findIndex(item => item.status === status);
+    if (index < 0) {
+        return "INVALID STATUS";
+    }
+    var currStatus = statusOptions[index];
+    var dd = '<button class="btn btn-' + currStatus.class + '" type="button">' +
+        status + '</button>';
+    return dd;
+}
+
 
 function updateDataList(data) {
     const index = updateList.findIndex(entry => entry.id === data.id);
@@ -242,7 +445,7 @@ async function fetchReportData(searchQuery) {
                 'Content-Type': 'application/json'
             }
         });
-        displayData(await api_response.json());
+        data = await api_response.json();
 
     } catch (error) {
         console.error('Error fetching data:', error);
@@ -442,7 +645,7 @@ document.getElementById('searchForm').addEventListener('submit', function (event
 });
 
 const updateList = [];
-sampleData = [
+data = [
     {
         "updated_time": "2024-08-06T18:29:30",
         "prev_status": "",
@@ -678,6 +881,5 @@ sampleData = [
     }
 ];
 
-// displayData(sampleData);
 
 window.onload = fetchReportData();   
