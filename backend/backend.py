@@ -48,6 +48,21 @@ def get_records(path_params, query_params):
         # Return the response
         print(cleaned_up)
         return cleaned_up    
+    elif query_params is not None and 'search' in query_params:
+        # Perform a global search
+        search_term = query_params['search'].lower()
+        response = table.scan()
+        items = response.get('Items', [])
+        matching_items = []
+        for item in items:
+            for key, value in item.items():
+                if isinstance(value, str) and search_term in value.lower():
+                    matching_items.append(item)
+                    break
+        cleaned_up = clean_up_unwanted_fields(matching_items)
+        print(f"{len(cleaned_up)} Records matched search term '{search_term}'")
+        print(cleaned_up)
+        return cleaned_up
     else:
         # Scan the table for all items
         response = table.scan()
