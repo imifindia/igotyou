@@ -16,18 +16,18 @@ function displayData(apiData) {
     data = [...apiData];
     // Populate the table headers
     const columnDef = [
-        { index: 1, title: "Date & Time", variable: "updated_time", pipe: "date" },
-        { index: 2, title: "True I Agree", variable: "up_vote", cellgenerator: "voteGenerator" },
-        { index: 3, title: "False I don't Agree", variable: "down_vote", cellgenerator: "voteGenerator" },
-        { index: 4, title: "Name", variable: "name" },
-        { index: 5, title: "Nickname", variable: "nickname" },
-        { index: 6, title: "Family Name", variable: "familyName" },
-        { index: 7, title: "Age", variable: "age" },
-        { index: 8, title: "Sex", variable: "sex" },
-        { index: 9, title: "Place", variable: "place" },
-        { index: 10, title: "Status", variable: "status", cellgenerator: "statusGenerator" },
-        { index: 11, title: "Prev Status", variable: "prev_status" },
-        { index: 12, title: "Prev Counters", variable: "prev_counter" }
+        { index: 1, title: "True I Agree", variable: "up_vote", cellgenerator: "voteGenerator" },
+        { index: 2, title: "False I don't Agree", variable: "down_vote", cellgenerator: "voteGenerator" },
+        { index: 3, title: "Name", variable: "name" },
+        { index: 4, title: "Nickname", variable: "nickname" },
+        { index: 5, title: "Family Name", variable: "familyName" },
+        { index: 6, title: "Age", variable: "age" },
+        { index: 7, title: "Sex", variable: "sex" },
+        { index: 8, title: "Place", variable: "place" },
+        { index: 9, title: "Status", variable: "status", cellgenerator: "statusGenerator" },
+        { index: 10, title: "Prev Status", variable: "prev_status" },
+        { index: 11, title: "Prev Counters", variable: "prev_counter" },
+        { index: 12, title: "Date & Time", variable: "updated_time", pipe: "date" }
     ];
     const headerRow = document.createElement('tr');
     for (i = 0; i < columnDef.length; i++) {
