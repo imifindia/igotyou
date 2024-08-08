@@ -12,7 +12,13 @@ const statusOptions = [
 var data;
 var currUpdatingEntry;
 // Function to display fetched JSON data
-function displayData(apiData) {
+function displayData(apiData) {    
+    const tableBody = document.querySelector('#dataTable tbody');
+    const tableHeader = document.querySelector('#dataTable thead');
+
+    // Clear the table body and header before adding new values
+    tableBody.innerHTML = '';
+    tableHeader.innerHTML = '';
     data = [...apiData];
     // Populate the table headers
     const columnDef = [
@@ -36,9 +42,8 @@ function displayData(apiData) {
         th.setAttribute("scope", "col");
         headerRow.appendChild(th);
     }
-    document.querySelector('#dataTable thead').appendChild(headerRow);
+    tableHeader.appendChild(headerRow);
     // Populate the table rows
-    const tableBody = document.querySelector('#dataTable tbody');
     data.forEach(item => {
         const row = document.createElement('tr');
         for (i = 0; i < columnDef.length; i++) {
@@ -223,9 +228,9 @@ function datePipe(date) {
 
 async function fetchReportData(searchQuery) {
     try {
-        apiUrl = 'https://fie5mxoea4.execute-api.ap-south-1.amazonaws.com/prod?persons=true';
+        var apiUrl = 'https://fie5mxoea4.execute-api.ap-south-1.amazonaws.com/prod?persons=true';
         if (searchQuery) {
-            apiUrl = 'https://fie5mxoea4.execute-api.ap-south-1.amazonaws.com/prod?persons=true&search=' + searchQuery;
+            apiUrl += '&search=' + searchQuery;
         }
         console.log("calling", apiUrl);
         const apiKey = 'iRhRWA3DDk2nnFBVfMQjC5wKEZ1F875s7HBCP9pc';
