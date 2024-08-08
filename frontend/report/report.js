@@ -97,7 +97,13 @@ document.addEventListener('DOMContentLoaded', function () {
             resizable: true,
             cellStyle: { textAlign: 'center' }
         },
-        onCellValueChanged: onCellValueChanged
+        onCellValueChanged: onCellValueChanged,
+        onGridReady: function (params) {
+            params.api.applyColumnState({
+                state: [{ colId: "updated_time", sort: "desc" }],
+                defaultState: { sort: null },
+              });
+        }
     };
 
     const eGridDiv = document.querySelector('#myGrid');
@@ -142,8 +148,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const saveButton = document.getElementById('saveButton');
     saveButton.addEventListener('click', function () {
-        const whoisModal = new bootstrap.Modal(document.getElementById('whoisModal'));
-        whoisModal.show();
+        const editedEntries = getEditedEntries();
+        if (editedEntries.length > 0) {
+            const whoisModal = new bootstrap.Modal(document.getElementById('whoisModal'));
+            whoisModal.show();
+        } else {
+            console.log('No edited entries to save.');
+            alert("No entries to save!")
+        }
     });
 
     // Initialize Who Is Form
