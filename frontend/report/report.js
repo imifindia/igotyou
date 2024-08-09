@@ -46,8 +46,9 @@ document.addEventListener('DOMContentLoaded', function () {
         },
 
         {
-            title: "Status", field: "status", cellEditor: 'agSelectCellEditor', width: 150,
-
+            title: "Status", field: "status", cellEditor: 'agSelectCellEditor', width: 150, editable: true,
+            headerTooltip: "Status Change",
+            tooltipValueGetter: () => "Double click to update current status",
             cellEditorParams: {
                 values: statusOptions.map(option => option.status)
             },
@@ -59,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function () {
         },
 
         {
-            title: "Prev Status", field: "prev_status", editable: false,
+            title: "Prev Status", field: "prev_status",
             cellClass: params => {
                 return "cell-" + getCellStyle(params.data.prev_status);
             },
@@ -68,19 +69,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
         {
             title: "I Agree", field: "up_vote", width: 100,
-            cellRenderer: voteRenderer, filter: false, editable: false
+            cellRenderer: voteRenderer, filter: false
         },
 
         {
             title: "I don't Agree", field: "down_vote", width: 100,
-            cellRenderer: voteRenderer, filter: false, editable: false
+            cellRenderer: voteRenderer, filter: false
         },
 
         // { title: "Prev Counters", field: "prev_counter" },
 
         {
-            title: "Date & Time", field: "updated_time", cellRenderer: dateRenderer,
-            editable: false
+            title: "Date & Time", field: "updated_time", cellRenderer: dateRenderer
         }
     ];
 
@@ -90,10 +90,12 @@ document.addEventListener('DOMContentLoaded', function () {
         columnDefs: columnDefs,
         rowData: rowData,
         rowHeight: 50,
+        tooltipShowDelay: 0,
+        tooltipHideDelay: 2000,
         defaultColDef: {
             sortable: true,
             filter: true,
-            editable: true,
+            editable: false,
             resizable: true,
             cellStyle: { textAlign: 'center' }
         },
@@ -102,7 +104,7 @@ document.addEventListener('DOMContentLoaded', function () {
             params.api.applyColumnState({
                 state: [{ colId: "updated_time", sort: "desc" }],
                 defaultState: { sort: null },
-              });
+            });
         }
     };
 
@@ -237,40 +239,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             localStorage.setItem('whoami', JSON.stringify(formData));
             // Submit to API
-
-            try {
-
-                const apiUrl = 'https://fie5mxoea4.execute-api.ap-south-1.amazonaws.com/prod?persons=true';
-                const apiKey = 'iRhRWA3DDk2nnFBVfMQjC5wKEZ1F875s7HBCP9pc';
-
-                fetch(apiUrl, {
-                    method: 'PUT',
-                    headers: {
-                        'x-api-key': apiKey,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(editedEntries)
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log('Success:', data);
-                        // Close Modal
-                        var myModal = bootstrap.Modal.getInstance(document.getElementById('whoisModal'));
-                        myModal.hide();
-                        // Handle success (e.g., display a success message, redirect, etc.)
-                    })
-                    .catch((error) => {
-                        console.error('Error:', error);
-                        alert("Error updating the data. Please try again later.");
-
-                        var myModal = bootstrap.Modal.getInstance(document.getElementById('whoisModal'));
-                        myModal.hide();
-                    });
-
-                event.preventDefault(); // Prevent default form submission
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
+            saveData(editedEntries);
         }
     });
 
@@ -341,20 +310,15 @@ function incrementVote(id) {
     countElement = btn.querySelector('span');
     countElement.textContent = currVote;
     val.up_vote = currVote;
+    val.edited = true;
 
     // Check down vote btn behaviour 
 
     const downBtn = document.querySelector('#downVote_' + id);
     if (downBtn.classList.contains("btn-danger")) {
         decrementVote(id);
-    } else {
-        updateDataList(val);
     }
-    /**
-     * 
-     * TODO:  API Call to correct Downvote entry 
-     * 
-     */
+    saveVote(val);
 }
 
 // DownVote listner
@@ -377,6 +341,7 @@ function decrementVote(id) {
     countElement = btn.querySelector('span');
     countElement.textContent = currVote;
     val.down_vote = currVote;
+    val.edited = true;
     /**
      * 
      * TODO:  API Call to upvote the entry 
@@ -386,14 +351,9 @@ function decrementVote(id) {
     const upBtn = document.querySelector('#upVote_' + id);
     if (upBtn.classList.contains("btn-success")) {
         incrementVote(id);
-        /**
-        * 
-        * TODO:  API Call to correct Downvote entry 
-        * 
-        */
-    } else {
-        updateDataList(val);
     }
+
+    saveVote(val); 
 }
 
 function voteGenerator(cellData) {
@@ -449,19 +409,6 @@ function statusBtnGenerator(cellData) {
     var dd = '<button class="btn btn-' + currStatus.class + '" type="button">' +
         status + '</button>';
     return dd;
-}
-
-
-function updateDataList(data) {
-    const index = updateList.findIndex(entry => entry.id === data.id);
-    // Remove the entry if it exists
-    if (index !== -1) {
-        updateList.splice(index, 1);
-    }
-    updateList.push(data);
-    currUpdatingEntry = data;
-    var myModal = new bootstrap.Modal(document.getElementById('whoisModal'));
-    myModal.show();
 }
 
 function onStatusChange(id, status) {
@@ -584,11 +531,63 @@ document.getElementById('exportButton').addEventListener('click', () => {
     exportToCSV(data);
 });
 
-document.getElementById('searchForm').addEventListener('submit', function (event) {
-    event.preventDefault();
-    const searchTerm = document.getElementById('searchInput').value;
-    fetchReportData(searchTerm);
-});
+function saveVote(entry) {
+    var storedVal = JSON.parse(localStorage.getItem('whoami'));
+    console.log('Using stored Value', storedVal);
+    if (storedVal && storedVal.name && storedVal.phone && storedVal.place) {
+        console.log('Using stored Value', storedVal);
+        let person = {};
+        person['name'] = storedVal.name;
+        person['place'] = storedVal.place ? storedVal.place : "";
+        person['phone'] = storedVal.phone ? storedVal.phone : "";
+        person.notes = "Voted for the entry";
+
+        entry.updated_by = person
+        saveData(entry);
+    } else {
+        // Open whoami modal
+        var myModal = new bootstrap.Modal(document.getElementById('whoisModal'));
+        myModal.show();
+    }
+}
+
+function saveData(updatedEntries) {
+    console.log("saving :", updatedEntries);
+    try {
+
+        const apiUrl = 'https://fie5mxoea4.execute-api.ap-south-1.amazonaws.com/prod?persons=true';
+        const apiKey = 'iRhRWA3DDk2nnFBVfMQjC5wKEZ1F875s7HBCP9pc';
+
+        fetch(apiUrl, {
+            method: 'PUT',
+            headers: {
+                'x-api-key': apiKey,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updatedEntries)
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                // Close Modal
+                var myModal = bootstrap.Modal.getInstance(document.getElementById('whoisModal'));
+                myModal.hide();
+                // Handle success (e.g., display a success message, redirect, etc.)
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert("Error updating the data. Please try again later.");
+
+                var myModal = bootstrap.Modal.getInstance(document.getElementById('whoisModal'));
+                myModal.hide();
+            });
+
+        event.preventDefault(); // Prevent default form submission
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+}
+
 
 const updateList = [];
 data = [
