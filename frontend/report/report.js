@@ -620,241 +620,241 @@ function makeHttpRequest() {
 makeHttpRequest();
 
 const updateList = [];
-data = [
-    {
-        "updated_time": "2024-08-06T18:29:30",
-        "prev_status": "",
-        "up_vote": "0",
-        "contactNumber": "3243",
-        "status": "Healthy",
-        "familyName": "sdad",
-        "name": "dsada",
-        "prev_counter": "0",
-        "nickname": "sada",
-        "updated_by": {
-            "name": "",
-            "phone": "",
-            "place": ""
-        },
-        "down_vote": "0",
-        "id": "c75014e3-74c4-4493-b8d2-ed64d2018d32",
-        "report_id": "0597c82b-8925-49f8-881e-790e7c887934"
-    },
-    {
-        "updated_time": "2024-08-05T10:19:58",
-        "prev_status": "",
-        "up_vote": "0",
-        "contactNumber": "",
-        "status": "Healthy",
-        "familyName": "",
-        "name": "",
-        "prev_counter": "0",
-        "nickname": "",
-        "updated_by": {
-            "name": "",
-            "phone": "",
-            "place": ""
-        },
-        "down_vote": "0",
-        "id": "4a0e778a-16bb-45d8-b5e7-96e813ba4d21",
-        "report_id": "1040d848-cccb-42f6-a71c-79b8501b1336"
-    },
-    {
-        "prev_status": "Injured",
-        "updated_time": "2024-08-03T23:20:58",
-        "up_vote": "19",
-        "contactNumber": "3456765432",
-        "status": "Injured",
-        "sex": "male",
-        "familyName": "hgfds",
-        "name": "hgfds",
-        "prev_counter": "15",
-        "nickname": "gfd",
-        "updated_by": {
-            "name": "vijesh",
-            "place": "tvm",
-            "phone": "7543233233",
-            "x_forwarded_for": "127.0.0.1, 127.0.0.2"
-        },
-        "down_vote": "4",
-        "place": "tvm",
-        "id": "9f88c330-8111-4599-919d-a160dd36bf73",
-        "x_forwarded_for": "127.0.0.1, 127.0.0.2",
-        "report_id": "48ac1916-3e9d-47b2-b961-484d388ab671",
-        "age": "20"
-    },
-    {
-        "updated_time": "2024-08-05T08:01:33",
-        "prev_status": "",
-        "up_vote": "0",
-        "contactNumber": "6686866565",
-        "status": "Injured",
-        "familyName": "Yesdd",
-        "name": "Gorir",
-        "prev_counter": "0",
-        "nickname": "Dbsjs",
-        "updated_by": {
-            "name": "",
-            "phone": "",
-            "place": ""
-        },
-        "down_vote": "0",
-        "id": "ed4d03c3-4556-43d1-ac83-97c3235819b0",
-        "report_id": "da26959b-5d23-4be2-a738-b78f81507c84"
-    },
-    {
-        "updated_time": "2024-08-05T10:47:35",
-        "prev_status": "",
-        "up_vote": "0",
-        "contactNumber": "Eby Kakkooran Kuriakose",
-        "status": "Healthy",
-        "familyName": "Eby Kakkooran Kuriakose",
-        "name": "Eby Kakkooran Kuriakose",
-        "prev_counter": "0",
-        "nickname": "Eby Kakkooran Kuriakose",
-        "updated_by": {
-            "name": "",
-            "phone": "",
-            "place": ""
-        },
-        "down_vote": "0",
-        "id": "34d03e9e-f7a4-4c58-bd42-40b862302389",
-        "report_id": "bf42a7c8-4768-48d0-9ede-23353ef4905c"
-    },
-    {
-        "updated_time": "2024-08-05T10:19:58",
-        "prev_status": "",
-        "up_vote": "0",
-        "contactNumber": "9886190240",
-        "status": "Healthy",
-        "familyName": "Kakkooran",
-        "name": "Eby",
-        "prev_counter": "0",
-        "nickname": "Eby",
-        "updated_by": {
-            "name": "",
-            "phone": "",
-            "place": ""
-        },
-        "down_vote": "0",
-        "id": "77611a13-9065-42a2-ad17-eef9da48f202",
-        "report_id": "d6bb3b89-7b5b-440a-a0bd-355f72b4ad1c"
-    },
-    {
-        "updated_time": "2024-08-04T00:00:31",
-        "prev_status": "",
-        "up_vote": "0",
-        "contactNumber": "",
-        "status": "ആരോഗ്യമുള്ള",
-        "familyName": "",
-        "name": "",
-        "prev_counter": "0",
-        "nickname": "",
-        "updated_by": {
-            "name": "",
-            "phone": "",
-            "place": ""
-        },
-        "down_vote": "0",
-        "id": "9ef24d4d-bc69-4901-b0d5-5d5c2a7fb1f4",
-        "report_id": "d0ac7802-d15c-4e98-8f97-5c81f4d5a4c8"
-    },
-    {
-        "updated_time": "2024-08-06T18:29:30",
-        "prev_status": "",
-        "up_vote": "0",
-        "contactNumber": "234",
-        "status": "Healthy",
-        "familyName": "asda",
-        "name": "TEST",
-        "prev_counter": "0",
-        "nickname": "sda",
-        "updated_by": {
-            "name": "",
-            "phone": "",
-            "place": ""
-        },
-        "down_vote": "0",
-        "id": "6aeec631-b9de-4f1d-aaf5-92560fd4765b",
-        "report_id": "f0fe292c-a929-4b1c-8ea2-63220478e365"
-    },
-    {
-        "updated_time": "2024-08-05T18:25:37",
-        "prev_status": "",
-        "up_vote": "0",
-        "contactNumber": "0909009090",
-        "status": "Healthy",
-        "familyName": "TEST",
-        "name": "TEST",
-        "prev_counter": "0",
-        "nickname": "TEST",
-        "updated_by": {
-            "name": "",
-            "phone": "",
-            "place": ""
-        },
-        "down_vote": "0",
-        "id": "613d54ae-7b2d-450f-8b15-9fd08ac46387",
-        "report_id": "a091eb25-7bc4-458e-80b5-90427dbc6715"
-    },
-    {
-        "updated_time": "2024-08-03T23:22:30",
-        "prev_status": "",
-        "up_vote": "0",
-        "contactNumber": "3456765432",
-        "status": "injured",
-        "familyName": "hgfds",
-        "name": "hgfds",
-        "prev_counter": "0",
-        "nickname": "gfd",
-        "updated_by": {
-            "name": "",
-            "phone": "",
-            "place": ""
-        },
-        "down_vote": "0",
-        "id": "eba709c8-4cf1-44e2-b55e-1c658fb3d37b",
-        "report_id": "afe0fb1e-2089-4f80-8eb3-d35d06e0babb"
-    },
-    {
-        "updated_time": "2024-08-03T23:22:30",
-        "prev_status": "",
-        "up_vote": "0",
-        "contactNumber": "3456765432",
-        "status": "injured",
-        "familyName": "hgfds",
-        "name": "hgfds",
-        "prev_counter": "0",
-        "nickname": "gfd",
-        "updated_by": {
-            "name": "",
-            "phone": "",
-            "place": ""
-        },
-        "down_vote": "0",
-        "id": "6b2270cf-9905-4c4f-a3bd-02b22e133852",
-        "report_id": "516070e6-f609-4578-814a-3f16954ab5f3"
-    },
-    {
-        "updated_time": "2024-08-05T10:12:06",
-        "prev_status": "",
-        "up_vote": "0",
-        "contactNumber": "",
-        "status": "Healthy",
-        "familyName": "",
-        "name": "",
-        "prev_counter": "0",
-        "nickname": "",
-        "updated_by": {
-            "name": "",
-            "phone": "",
-            "place": ""
-        },
-        "down_vote": "0",
-        "id": "bb3ac89d-510f-46f7-9797-e1e35411cd00",
-        "report_id": "1b28302f-84d1-4950-ad88-3c2ddb56d07c"
-    }
-];
-
+// data = [
+//     {
+//         "updated_time": "2024-08-06T18:29:30",
+//         "prev_status": "",
+//         "up_vote": "0",
+//         "contactNumber": "3243",
+//         "status": "Healthy",
+//         "familyName": "sdad",
+//         "name": "dsada",
+//         "prev_counter": "0",
+//         "nickname": "sada",
+//         "updated_by": {
+//             "name": "",
+//             "phone": "",
+//             "place": ""
+//         },
+//         "down_vote": "0",
+//         "id": "c75014e3-74c4-4493-b8d2-ed64d2018d32",
+//         "report_id": "0597c82b-8925-49f8-881e-790e7c887934"
+//     },
+//     {
+//         "updated_time": "2024-08-05T10:19:58",
+//         "prev_status": "",
+//         "up_vote": "0",
+//         "contactNumber": "",
+//         "status": "Healthy",
+//         "familyName": "",
+//         "name": "",
+//         "prev_counter": "0",
+//         "nickname": "",
+//         "updated_by": {
+//             "name": "",
+//             "phone": "",
+//             "place": ""
+//         },
+//         "down_vote": "0",
+//         "id": "4a0e778a-16bb-45d8-b5e7-96e813ba4d21",
+//         "report_id": "1040d848-cccb-42f6-a71c-79b8501b1336"
+//     },
+//     {
+//         "prev_status": "Injured",
+//         "updated_time": "2024-08-03T23:20:58",
+//         "up_vote": "19",
+//         "contactNumber": "3456765432",
+//         "status": "Injured",
+//         "sex": "male",
+//         "familyName": "hgfds",
+//         "name": "hgfds",
+//         "prev_counter": "15",
+//         "nickname": "gfd",
+//         "updated_by": {
+//             "name": "vijesh",
+//             "place": "tvm",
+//             "phone": "7543233233",
+//             "x_forwarded_for": "127.0.0.1, 127.0.0.2"
+//         },
+//         "down_vote": "4",
+//         "place": "tvm",
+//         "id": "9f88c330-8111-4599-919d-a160dd36bf73",
+//         "x_forwarded_for": "127.0.0.1, 127.0.0.2",
+//         "report_id": "48ac1916-3e9d-47b2-b961-484d388ab671",
+//         "age": "20"
+//     },
+//     {
+//         "updated_time": "2024-08-05T08:01:33",
+//         "prev_status": "",
+//         "up_vote": "0",
+//         "contactNumber": "6686866565",
+//         "status": "Injured",
+//         "familyName": "Yesdd",
+//         "name": "Gorir",
+//         "prev_counter": "0",
+//         "nickname": "Dbsjs",
+//         "updated_by": {
+//             "name": "",
+//             "phone": "",
+//             "place": ""
+//         },
+//         "down_vote": "0",
+//         "id": "ed4d03c3-4556-43d1-ac83-97c3235819b0",
+//         "report_id": "da26959b-5d23-4be2-a738-b78f81507c84"
+//     },
+//     {
+//         "updated_time": "2024-08-05T10:47:35",
+//         "prev_status": "",
+//         "up_vote": "0",
+//         "contactNumber": "Eby Kakkooran Kuriakose",
+//         "status": "Healthy",
+//         "familyName": "Eby Kakkooran Kuriakose",
+//         "name": "Eby Kakkooran Kuriakose",
+//         "prev_counter": "0",
+//         "nickname": "Eby Kakkooran Kuriakose",
+//         "updated_by": {
+//             "name": "",
+//             "phone": "",
+//             "place": ""
+//         },
+//         "down_vote": "0",
+//         "id": "34d03e9e-f7a4-4c58-bd42-40b862302389",
+//         "report_id": "bf42a7c8-4768-48d0-9ede-23353ef4905c"
+//     },
+//     {
+//         "updated_time": "2024-08-05T10:19:58",
+//         "prev_status": "",
+//         "up_vote": "0",
+//         "contactNumber": "9886190240",
+//         "status": "Healthy",
+//         "familyName": "Kakkooran",
+//         "name": "Eby",
+//         "prev_counter": "0",
+//         "nickname": "Eby",
+//         "updated_by": {
+//             "name": "",
+//             "phone": "",
+//             "place": ""
+//         },
+//         "down_vote": "0",
+//         "id": "77611a13-9065-42a2-ad17-eef9da48f202",
+//         "report_id": "d6bb3b89-7b5b-440a-a0bd-355f72b4ad1c"
+//     },
+//     {
+//         "updated_time": "2024-08-04T00:00:31",
+//         "prev_status": "",
+//         "up_vote": "0",
+//         "contactNumber": "",
+//         "status": "ആരോഗ്യമുള്ള",
+//         "familyName": "",
+//         "name": "",
+//         "prev_counter": "0",
+//         "nickname": "",
+//         "updated_by": {
+//             "name": "",
+//             "phone": "",
+//             "place": ""
+//         },
+//         "down_vote": "0",
+//         "id": "9ef24d4d-bc69-4901-b0d5-5d5c2a7fb1f4",
+//         "report_id": "d0ac7802-d15c-4e98-8f97-5c81f4d5a4c8"
+//     },
+//     {
+//         "updated_time": "2024-08-06T18:29:30",
+//         "prev_status": "",
+//         "up_vote": "0",
+//         "contactNumber": "234",
+//         "status": "Healthy",
+//         "familyName": "asda",
+//         "name": "TEST",
+//         "prev_counter": "0",
+//         "nickname": "sda",
+//         "updated_by": {
+//             "name": "",
+//             "phone": "",
+//             "place": ""
+//         },
+//         "down_vote": "0",
+//         "id": "6aeec631-b9de-4f1d-aaf5-92560fd4765b",
+//         "report_id": "f0fe292c-a929-4b1c-8ea2-63220478e365"
+//     },
+//     {
+//         "updated_time": "2024-08-05T18:25:37",
+//         "prev_status": "",
+//         "up_vote": "0",
+//         "contactNumber": "0909009090",
+//         "status": "Healthy",
+//         "familyName": "TEST",
+//         "name": "TEST",
+//         "prev_counter": "0",
+//         "nickname": "TEST",
+//         "updated_by": {
+//             "name": "",
+//             "phone": "",
+//             "place": ""
+//         },
+//         "down_vote": "0",
+//         "id": "613d54ae-7b2d-450f-8b15-9fd08ac46387",
+//         "report_id": "a091eb25-7bc4-458e-80b5-90427dbc6715"
+//     },
+//     {
+//         "updated_time": "2024-08-03T23:22:30",
+//         "prev_status": "",
+//         "up_vote": "0",
+//         "contactNumber": "3456765432",
+//         "status": "injured",
+//         "familyName": "hgfds",
+//         "name": "hgfds",
+//         "prev_counter": "0",
+//         "nickname": "gfd",
+//         "updated_by": {
+//             "name": "",
+//             "phone": "",
+//             "place": ""
+//         },
+//         "down_vote": "0",
+//         "id": "eba709c8-4cf1-44e2-b55e-1c658fb3d37b",
+//         "report_id": "afe0fb1e-2089-4f80-8eb3-d35d06e0babb"
+//     },
+//     {
+//         "updated_time": "2024-08-03T23:22:30",
+//         "prev_status": "",
+//         "up_vote": "0",
+//         "contactNumber": "3456765432",
+//         "status": "injured",
+//         "familyName": "hgfds",
+//         "name": "hgfds",
+//         "prev_counter": "0",
+//         "nickname": "gfd",
+//         "updated_by": {
+//             "name": "",
+//             "phone": "",
+//             "place": ""
+//         },
+//         "down_vote": "0",
+//         "id": "6b2270cf-9905-4c4f-a3bd-02b22e133852",
+//         "report_id": "516070e6-f609-4578-814a-3f16954ab5f3"
+//     },
+//     {
+//         "updated_time": "2024-08-05T10:12:06",
+//         "prev_status": "",
+//         "up_vote": "0",
+//         "contactNumber": "",
+//         "status": "Healthy",
+//         "familyName": "",
+//         "name": "",
+//         "prev_counter": "0",
+//         "nickname": "",
+//         "updated_by": {
+//             "name": "",
+//             "phone": "",
+//             "place": ""
+//         },
+//         "down_vote": "0",
+//         "id": "bb3ac89d-510f-46f7-9797-e1e35411cd00",
+//         "report_id": "1b28302f-84d1-4950-ad88-3c2ddb56d07c"
+//     }
+// ];
+data = []
 
 window.onload = fetchReportData();   
