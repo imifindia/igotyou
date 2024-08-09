@@ -440,6 +440,7 @@ async function fetchReportData(searchQuery) {
             }
         })
         data = await api_response.json();
+        gridApi.setGridOption("rowData", data);
 
     } catch (error) {
         console.error('Error fetching data:', error);
