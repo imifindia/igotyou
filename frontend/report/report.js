@@ -132,7 +132,6 @@ document.addEventListener('DOMContentLoaded', function () {
     // Function to handle cell value changes
     function onCellValueChanged(event) {
         event.data.edited = true;
-        console.log('Data after change is', event.data);
     }
 
 
@@ -144,7 +143,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 editedEntries.push(node.data);
             }
         });
-        console.log('Edited Entries:', editedEntries);
         return editedEntries;
     }
 
@@ -164,9 +162,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const whoisForm = document.getElementById('whoisForm');
     const maxLength = 50; // Example max length
     var storedVal = JSON.parse(localStorage.getItem('whoami'));
-    console.log('Using stored Value', storedVal);
     if (storedVal && storedVal.name) {
-        console.log('Using stored Value', storedVal);
         whoisForm.elements['name'].value = storedVal.name;
         whoisForm.elements['place'].value = storedVal.place ? storedVal.place : "";
         whoisForm.elements['phone'].value = storedVal.phone ? storedVal.phone : "";
@@ -234,7 +230,6 @@ document.addEventListener('DOMContentLoaded', function () {
             editedEntries.forEach(entry => {
                 entry.updated_by = formData;
                 prepareDataForUpdate(entry)
-                console.log(entry);
             })
 
             localStorage.setItem('whoami', JSON.stringify(formData));
@@ -267,7 +262,6 @@ function getCellStyle(status) {
 
 
 function voteRenderer(params) {
-    // console.log(params);
     isUpVote = params.column.colId == "up_vote";
     cellValue = params.data;
     if (isUpVote) {
@@ -323,7 +317,6 @@ function incrementVote(id) {
 
 // DownVote listner
 function decrementVote(id) {
-    console.log('decrementing for ', id)
     const val = data.find(value => value.id == id);
     currVote = val.down_vote;
     const btn = document.querySelector('#downVote_' + id);
@@ -415,8 +408,6 @@ function onStatusChange(id, status) {
     const val = data.find(value => value.id == id);
     val.status = status;
     updateDataList(val);
-
-    console.log(val)
 }
 
 function datePipe(date) {
@@ -436,14 +427,13 @@ function datePipe(date) {
 }
 
 async function fetchReportData(searchQuery) {
+    showLoadingIcon(); // Show loading screen before the request    
     try {
         let apiUrl = 'https://fie5mxoea4.execute-api.ap-south-1.amazonaws.com/prod?persons=true';
         if (searchQuery) {
             apiUrl += '&search=' + searchQuery;
         }
-        console.log("calling", apiUrl);
         const apiKey = 'iRhRWA3DDk2nnFBVfMQjC5wKEZ1F875s7HBCP9pc';
-        showLoadingIcon();
         const api_response = await fetch(apiUrl, {
             method: 'GET',
             headers: {
@@ -451,13 +441,12 @@ async function fetchReportData(searchQuery) {
                 'Content-Type': 'application/json'
             }
         })
-            .finally(() => {
-                hideLoadingIcon();
-            });
         data = await api_response.json();
 
     } catch (error) {
         console.error('Error fetching data:', error);
+    }finally {
+        hideLoadingIcon(); // Hide loading screen after the request completes
     }
 }
 
@@ -546,9 +535,7 @@ function hideLoadingIcon() {
 
 function saveVote(entry) {
     var storedVal = JSON.parse(localStorage.getItem('whoami'));
-    console.log('Using stored Value', storedVal);
     if (storedVal && storedVal.name && storedVal.phone && storedVal.place) {
-        console.log('Using stored Value', storedVal);
         let person = {};
         person['name'] = storedVal.name;
         person['place'] = storedVal.place ? storedVal.place : "";
