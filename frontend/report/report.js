@@ -12,137 +12,152 @@ const statusOptions = [
 statusOptions.map(status => { status.status })
 let data = [];
 var currUpdatingEntry;
+// Global variable to hold the grid options
 let gridApi;
 
-document.addEventListener('DOMContentLoaded', function () {
-    const columnDefs = [
-        {
-            title: "Name", field: "name", width: 200
+
+
+const columnDefs = [
+    {
+        title: "Name", field: "name", width: 200
+    },
+
+    {
+        title: "Nickname", field: "nickname", width: 150
+    },
+
+    {
+        title: "Family Name", field: "familyName", width: 250
+    },
+
+    {
+        title: "Age", field: "age", width: 80,
+        valueParser: numberParser
+    },
+
+    {
+        title: "Sex", field: "sex", width: 80,
+        cellEditor: 'agSelectCellEditor',
+        cellEditorParams: {
+            values: ["Male", "Female", "Other"]
+        },
+    },
+
+    {
+        title: "Place", field: "place"
+    },
+
+    {
+        title: "Status", field: "status", cellEditor: 'agSelectCellEditor', width: 150, editable: true,
+        headerTooltip: "Status Change",
+        tooltipValueGetter: () => "Double click to update current status",
+        cellEditorParams: {
+            values: statusOptions.map(option => option.status)
         },
 
-        {
-            title: "Nickname", field: "nickname", width: 150
+        cellClass: params => {
+            return "cell-" + getCellStyle(params.data.status);
         },
 
-        {
-            title: "Family Name", field: "familyName", width: 250
+    },
+
+    {
+        title: "Prev Status", field: "prev_status",
+        cellClass: params => {
+            return "cell-" + getCellStyle(params.data.prev_status);
         },
 
-        {
-            title: "Age", field: "age", width: 80,
-            valueParser: numberParser
-        },
+    },
 
-        {
-            title: "Sex", field: "sex", width: 80,
-            cellEditor: 'agSelectCellEditor',
-            cellEditorParams: {
-                values: ["Male", "Female", "Other"]
-            },
-        },
+    {
+        title: "I Agree", field: "up_vote", width: 100,
+        cellRenderer: voteRenderer, filter: false
+    },
 
-        {
-            title: "Place", field: "place"
-        },
+    {
+        title: "I don't Agree", field: "down_vote", width: 100,
+        cellRenderer: voteRenderer, filter: false
+    },
 
-        {
-            title: "Status", field: "status", cellEditor: 'agSelectCellEditor', width: 150, editable: true,
-            headerTooltip: "Status Change",
-            tooltipValueGetter: () => "Double click to update current status",
-            cellEditorParams: {
-                values: statusOptions.map(option => option.status)
-            },
+    // { title: "Prev Counters", field: "prev_counter" },
 
-            cellClass: params => {
-                return "cell-" + getCellStyle(params.data.status);
-            },
-
-        },
-
-        {
-            title: "Prev Status", field: "prev_status",
-            cellClass: params => {
-                return "cell-" + getCellStyle(params.data.prev_status);
-            },
-
-        },
-
-        {
-            title: "I Agree", field: "up_vote", width: 100,
-            cellRenderer: voteRenderer, filter: false
-        },
-
-        {
-            title: "I don't Agree", field: "down_vote", width: 100,
-            cellRenderer: voteRenderer, filter: false
-        },
-
-        // { title: "Prev Counters", field: "prev_counter" },
-
-        {
-            title: "Date & Time", field: "updated_time", cellRenderer: dateRenderer
-        }
-    ];
-
-    const gridOptions = {
-        columnDefs: columnDefs,
-        rowData: data,
-        rowHeight: 50,
-        tooltipShowDelay: 0,
-        tooltipHideDelay: 2000,
-        defaultColDef: {
-            sortable: true,
-            filter: true,
-            editable: false,
-            resizable: true,
-            cellStyle: { textAlign: 'center' }
-        },
-        onCellValueChanged: onCellValueChanged,
-        onGridReady: function (params) {
-            params.api.applyColumnState({
-                state: [{ colId: "updated_time", sort: "desc" }],
-                defaultState: { sort: null },
-            });
-        }
-    };
-
-    const eGridDiv = document.querySelector('#myGrid');
-    const gridApi = new agGrid.createGrid(eGridDiv, gridOptions);
-
-    function numberParser(params) {
-        const newValue = params.newValue;
-        const parsedValue = parseInt(newValue);
-        return isNaN(parsedValue) ? null : parsedValue;
+    {
+        title: "Date & Time", field: "updated_time", cellRenderer: dateRenderer
     }
+];
 
-
-    function dateRenderer(params) {
-        const date = new Date(params.value);
-        const day = String(date.getDate()).padStart(2, '0');
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const year = date.getFullYear();
-        const hours = String(date.getHours()).padStart(2, '0');
-        const minutes = String(date.getMinutes()).padStart(2, '0');
-        const timezone = date.toTimeString().split(' ')[1];
-        return `${day}/${month}/${year} ${hours}:${minutes}`;
-    }
-
-    // Function to handle cell value changes
-    function onCellValueChanged(event) {
-        event.data.edited = true;
-    }
-
-
-    // Function to get edited entries
-    function getEditedEntries() {
-        const editedEntries = [];
-        gridApi.forEachNode(function (node) {
-            if (node.data.edited) {
-                editedEntries.push(node.data);
-            }
+const gridOptions = {
+    columnDefs: columnDefs,
+    rowData: [],
+    rowHeight: 50,
+    tooltipShowDelay: 0,
+    tooltipHideDelay: 2000,
+    defaultColDef: {
+        sortable: true,
+        filter: true,
+        editable: false,
+        resizable: true,
+        cellStyle: { textAlign: 'center' }
+    },
+    onCellValueChanged: onCellValueChanged,
+    onGridReady: function (params) {
+        params.api.applyColumnState({
+            state: [{ colId: "updated_time", sort: "desc" }],
+            defaultState: { sort: null },
         });
-        return editedEntries;
     }
+};
+
+
+
+
+// Function to initialize the grid with data
+async function initializeGrid() {
+
+    // Fetch data and update the grid
+    const data = await fetchReportData();
+    if (data) {
+        gridApi.setGridOption('rowData', data);
+    } else {
+        console.log("Data loading failed ", data)
+    }
+}
+
+async function fetchReportData(searchQuery) {
+    showLoadingIcon(); // Show loading screen before the request    
+    try {
+        let apiUrl = 'https://fie5mxoea4.execute-api.ap-south-1.amazonaws.com/prod?persons=true';
+        if (searchQuery) {
+            apiUrl += '&search=' + searchQuery;
+        }
+        const apiKey = 'iRhRWA3DDk2nnFBVfMQjC5wKEZ1F875s7HBCP9pc';
+        const api_response = await fetch(apiUrl, {
+            method: 'GET',
+            headers: {
+                'x-api-key': apiKey,
+                'Content-Type': 'application/json'
+            }
+        })
+        data = await api_response.json();
+        return data; // Return the fetched data
+    } catch (error) {
+        console.error('Error fetching report data:', error);
+        return null;
+    } finally {
+        hideLoadingIcon(); // Hide loading screen after the request completes
+    }
+}
+
+// Iniitialize other methods and triggers
+document.addEventListener('DOMContentLoaded', function () {
+
+    var gridDiv = document.querySelector("#myGrid");
+    gridApi = agGrid.createGrid(gridDiv, gridOptions);
+    gridApi.setGridOption('rowData', sampleData);
+
+    initializeGrid();
+
+
 
     const saveButton = document.getElementById('saveButton');
     saveButton.addEventListener('click', function () {
@@ -238,6 +253,41 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 
+
+function numberParser(params) {
+    const newValue = params.newValue;
+    const parsedValue = parseInt(newValue);
+    return isNaN(parsedValue) ? null : parsedValue;
+}
+
+
+function dateRenderer(params) {
+    const date = new Date(params.value);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const timezone = date.toTimeString().split(' ')[1];
+    return `${day}/${month}/${year} ${hours}:${minutes}`;
+}
+
+// Function to handle cell value changes
+function onCellValueChanged(event) {
+    event.data.edited = true;
+}
+
+
+// Function to get edited entries
+function getEditedEntries() {
+    const editedEntries = [];
+    gridApi.forEachNode(function (node) {
+        if (node.data.edited) {
+            editedEntries.push(node.data);
+        }
+    });
+    return editedEntries;
+}
 
 
 function getCellStyle(status) {
@@ -424,31 +474,6 @@ function datePipe(date) {
     return new Intl.DateTimeFormat('en-GB', options).format(date);
 }
 
-async function fetchReportData(searchQuery) {
-    showLoadingIcon(); // Show loading screen before the request    
-    try {
-        let apiUrl = 'https://fie5mxoea4.execute-api.ap-south-1.amazonaws.com/prod?persons=true';
-        if (searchQuery) {
-            apiUrl += '&search=' + searchQuery;
-        }
-        const apiKey = 'iRhRWA3DDk2nnFBVfMQjC5wKEZ1F875s7HBCP9pc';
-        const api_response = await fetch(apiUrl, {
-            method: 'GET',
-            headers: {
-                'x-api-key': apiKey,
-                'Content-Type': 'application/json'
-            }
-        })
-        data = await api_response.json();
-        gridApi.setGridOption("rowData", data);
-
-    } catch (error) {
-        console.error('Error fetching data:', error);
-    } finally {
-        hideLoadingIcon(); // Hide loading screen after the request completes
-    }
-}
-
 
 function prepareDataForUpdate(person) {
     delete person.place;
@@ -592,21 +617,8 @@ function saveData(updatedEntries) {
     }
 }
 
-// Example function to simulate an HTTP request
-function makeHttpRequest() {
-    showLoadingIcon();
-    // Simulate an HTTP request with a timeout
-    setTimeout(function () {
-        hideLoadingIcon();
-        // Handle the response here
-    }, 20000);
-}
-
-// Call the example function to simulate an HTTP request
-makeHttpRequest();
-
 const updateList = [];
-data = [
+sampleData = [
     {
         "updated_time": "2024-08-06T18:29:30",
         "prev_status": "",
@@ -861,4 +873,4 @@ data = [
     }
 ];
 
-window.onload = fetchReportData();   
+// window.onload = initializeGrid();   
