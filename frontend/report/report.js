@@ -10,7 +10,7 @@ const statusOptions = [
     { status: "Returned to Home", class: "success" }
 ];
 statusOptions.map(status => { status.status })
-var data;
+let data = [];
 var currUpdatingEntry;
 
 
@@ -84,11 +84,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     ];
 
-    const rowData = data;
-
     const gridOptions = {
         columnDefs: columnDefs,
-        rowData: rowData,
+        rowData: data,
         rowHeight: 50,
         tooltipShowDelay: 0,
         tooltipHideDelay: 2000,
@@ -842,6 +840,5 @@ const updateList = [];
 //         "report_id": "1b28302f-84d1-4950-ad88-3c2ddb56d07c"
 //     }
 // ];
-data = []
 
 window.onload = fetchReportData();   
