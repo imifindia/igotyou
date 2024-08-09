@@ -95,7 +95,7 @@ const gridOptions = {
     defaultColDef: {
         sortable: true,
         filter: true,
-        editable: false,
+        editable: true,
         resizable: true,
         cellStyle: { textAlign: 'center' }
     },
