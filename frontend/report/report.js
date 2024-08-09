@@ -451,9 +451,9 @@ async function fetchReportData(searchQuery) {
                 'Content-Type': 'application/json'
             }
         })
-        .finally(() => {
-            hideLoadingIcon();
-        });
+            .finally(() => {
+                hideLoadingIcon();
+            });
         data = await api_response.json();
 
     } catch (error) {
@@ -584,7 +584,8 @@ function saveData(updatedEntries) {
                 console.log('Success:', data);
                 // Close Modal
                 var myModal = bootstrap.Modal.getInstance(document.getElementById('whoisModal'));
-                myModal.hide();
+                if (myModal)
+                    myModal.hide();
                 // Handle success (e.g., display a success message, redirect, etc.)
             })
             .catch((error) => {
@@ -592,7 +593,8 @@ function saveData(updatedEntries) {
                 alert("Error updating the data. Please try again later.");
 
                 var myModal = bootstrap.Modal.getInstance(document.getElementById('whoisModal'));
-                myModal.hide();
+                if (myModal)
+                    myModal.hide();
             })
             .finally(() => {
                 hideLoadingIcon();
