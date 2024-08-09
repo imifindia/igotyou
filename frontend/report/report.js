@@ -596,7 +596,7 @@ function saveData(updatedEntries) {
                 if (myModal)
                     myModal.hide();
                 // Handle success (e.g., display a success message, redirect, etc.)
-                fetchReportData();
+                initializeGrid();
             })
             .catch((error) => {
                 console.error('Error:', error);
