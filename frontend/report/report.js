@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var gridDiv = document.querySelector("#myGrid");
     gridApi = agGrid.createGrid(gridDiv, gridOptions);
-    gridApi.setGridOption('rowData', sampleData);
+    // gridApi.setGridOption('rowData', sampleData);
 
     initializeGrid();
 
