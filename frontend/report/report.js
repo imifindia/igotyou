@@ -587,11 +587,11 @@ function saveData(updatedEntries) {
                 if (myModal)
                     myModal.hide();
                 // Handle success (e.g., display a success message, redirect, etc.)
+                fetchReportData();
             })
             .catch((error) => {
                 console.error('Error:', error);
                 alert("Error updating the data. Please try again later.");
-
                 var myModal = bootstrap.Modal.getInstance(document.getElementById('whoisModal'));
                 if (myModal)
                     myModal.hide();
