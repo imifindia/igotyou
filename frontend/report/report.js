@@ -113,13 +113,14 @@ const gridOptions = {
 
 // Function to initialize the grid with data
 async function initializeGrid() {
-
+    gridApi.setGridOption("rowData", []);
     // Fetch data and update the grid
     const data = await fetchReportData();
     if (data) {
         gridApi.setGridOption('rowData', data);
     } else {
         console.log("Data loading failed ", data)
+        gridApi.setGridOption('rowData', sampleData);
     }
 }
 
