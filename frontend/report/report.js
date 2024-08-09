@@ -353,7 +353,7 @@ function decrementVote(id) {
         incrementVote(id);
     }
 
-    saveVote(val); 
+    saveVote(val);
 }
 
 function voteGenerator(cellData) {
@@ -443,13 +443,16 @@ async function fetchReportData(searchQuery) {
         }
         console.log("calling", apiUrl);
         const apiKey = 'iRhRWA3DDk2nnFBVfMQjC5wKEZ1F875s7HBCP9pc';
-
+        showLoadingIcon();
         const api_response = await fetch(apiUrl, {
             method: 'GET',
             headers: {
                 'x-api-key': apiKey,
                 'Content-Type': 'application/json'
             }
+        })
+        .finally(() => {
+            hideLoadingIcon();
         });
         data = await api_response.json();
 
@@ -531,6 +534,16 @@ document.getElementById('exportButton').addEventListener('click', () => {
     exportToCSV(data);
 });
 
+// Function to show loading icon and overlay
+function showLoadingIcon() {
+    document.getElementById('loadingOverlay').style.display = 'flex';
+}
+
+// Function to hide loading icon and overlay
+function hideLoadingIcon() {
+    document.getElementById('loadingOverlay').style.display = 'none';
+}
+
 function saveVote(entry) {
     var storedVal = JSON.parse(localStorage.getItem('whoami'));
     console.log('Using stored Value', storedVal);
@@ -557,7 +570,7 @@ function saveData(updatedEntries) {
 
         const apiUrl = 'https://fie5mxoea4.execute-api.ap-south-1.amazonaws.com/prod?persons=true';
         const apiKey = 'iRhRWA3DDk2nnFBVfMQjC5wKEZ1F875s7HBCP9pc';
-
+        showLoadingIcon();
         fetch(apiUrl, {
             method: 'PUT',
             headers: {
@@ -580,6 +593,9 @@ function saveData(updatedEntries) {
 
                 var myModal = bootstrap.Modal.getInstance(document.getElementById('whoisModal'));
                 myModal.hide();
+            })
+            .finally(() => {
+                hideLoadingIcon();
             });
 
         event.preventDefault(); // Prevent default form submission
@@ -588,6 +604,18 @@ function saveData(updatedEntries) {
     }
 }
 
+// Example function to simulate an HTTP request
+function makeHttpRequest() {
+    showLoadingIcon();
+    // Simulate an HTTP request with a timeout
+    setTimeout(function () {
+        hideLoadingIcon();
+        // Handle the response here
+    }, 20000);
+}
+
+// Call the example function to simulate an HTTP request
+makeHttpRequest();
 
 const updateList = [];
 data = [
