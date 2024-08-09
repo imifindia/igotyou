@@ -157,8 +157,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     initializeGrid();
 
-
-
     const saveButton = document.getElementById('saveButton');
     saveButton.addEventListener('click', function () {
         const editedEntries = getEditedEntries();
@@ -567,7 +565,7 @@ function saveVote(entry) {
         person.notes = "Voted for the entry";
 
         entry.updated_by = person
-        saveData(entry);
+        saveData([entry]);
     } else {
         // Open whoami modal
         var myModal = new bootstrap.Modal(document.getElementById('whoisModal'));
