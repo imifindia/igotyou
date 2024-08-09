@@ -12,7 +12,7 @@ const statusOptions = [
 statusOptions.map(status => { status.status })
 let data = [];
 var currUpdatingEntry;
-
+let gridApi;
 
 document.addEventListener('DOMContentLoaded', function () {
     const columnDefs = [
@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     const eGridDiv = document.querySelector('#myGrid');
-    const api = new agGrid.createGrid(eGridDiv, gridOptions);
+    const gridApi = new agGrid.createGrid(eGridDiv, gridOptions);
 
     function numberParser(params) {
         const newValue = params.newValue;
@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Function to get edited entries
     function getEditedEntries() {
         const editedEntries = [];
-        api.forEachNode(function (node) {
+        gridApi.forEachNode(function (node) {
             if (node.data.edited) {
                 editedEntries.push(node.data);
             }
