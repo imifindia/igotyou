@@ -205,6 +205,10 @@ function addPersonCard() {
   personCard.className = 'card mb-3 person-card';
   personCard.innerHTML = `
       <div class="card-body" data-person="">
+        <div class="d-flex justify-content-between">
+            <p>Enter the person's data</p>
+            <button class="btn btn-link person-card-close" id="help-close-button" onclick="event.target.closest('.card').remove()"><i class="fas fa-times text-dark text-end"></i></button>
+        </div>
         <div class="form-row">
           <div class="form-group col-md-6">
             <label for="name">${i18next.t('name')}</label>

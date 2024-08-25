@@ -126,3 +126,7 @@ h5 {
     height: 100%;
     flex: 1;
 }
+
+#people-container> :first-child .person-card-close {
+    display: none;
+}
