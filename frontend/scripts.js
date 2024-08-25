@@ -2,32 +2,32 @@
 
 mapboxgl.accessToken = 'pk.eyJ1IjoiaW1pZmluZGlhIiwiYSI6ImNsejhtM3J5dTAyZmwybHNkcjlrZzUyM2UifQ.EYhRAkvwwMyTz7X-CGmudA';
 const map = new mapboxgl.Map({
-    container: 'map',
-    style: 'mapbox://styles/mapbox/streets-v11',
-    center: [0, 0],
-    zoom: 2
+  container: 'map',
+  style: 'mapbox://styles/mapbox/streets-v11',
+  center: [0, 0],
+  zoom: 2
 });
 
 // Search control.
 var geocoder = new MapboxGeocoder({
-    accessToken: mapboxgl.accessToken,
-    mapboxgl: mapboxgl,
-    marker: false
+  accessToken: mapboxgl.accessToken,
+  mapboxgl: mapboxgl,
+  marker: false
 });
 map.addControl(geocoder);
 
 // Locate button.
 var geolocate = new mapboxgl.GeolocateControl({
-    positionOptions: {
-        enableHighAccuracy: true
-    },
-    showUserLocation: false,
-    trackUserLocation: false
+  positionOptions: {
+    enableHighAccuracy: true
+  },
+  showUserLocation: false,
+  trackUserLocation: false
 });
 map.addControl(geolocate);
 map.on('load', function () {
-    map.resize();
-    geolocate.trigger();
+  map.resize();
+  geolocate.trigger();
 });
 
 // Add compass and zoom controls
@@ -36,145 +36,152 @@ map.addControl(navControl);
 
 // Get the user's location
 if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(function (position) {
-        var lat = position.coords.latitude;
-        var lon = position.coords.longitude;
-        var userMarker = new mapboxgl.Marker({ draggable: true })
-            .setLngLat([lon, lat])
-            .addTo(map);
-        map.setCenter([lon, lat]);
-        document.getElementById('coords').value = `${lat},${lon}`;
+  navigator.geolocation.getCurrentPosition(function (position) {
+    var lat = position.coords.latitude;
+    var lon = position.coords.longitude;
+    var userMarker = new mapboxgl.Marker({ draggable: true })
+      .setLngLat([lon, lat])
+      .addTo(map);
+    map.setCenter([lon, lat]);
+    document.getElementById('coords').value = `${lat},${lon}`;
 
-        userMarker.on('dragend', function () {
-            var lngLat = userMarker.getLngLat();
-            document.getElementById('coords').value = `${lngLat.lng},${lngLat.lat}`;
-        });
-
-        geolocate.on('geolocate', (e) => {
-            map.flyTo({ center: [e.coords.longitude, e.coords.latitude], zoom: 15 });
-            userMarker.setLngLat([e.coords.longitude, e.coords.latitude])
-            document.getElementById('coords').value = `${e.coords.longitude},${e.coords.latitude}`;
-        });
-
-        geocoder.on('result', function (e) {
-            const coordinates = e.result.geometry.coordinates;
-            userMarker.setLngLat(coordinates);
-            map.flyTo({ center: coordinates, zoom: 15 });
-            document.getElementById('coords').value = `${coordinates[0]},${coordinates[1]}`;
-        });
-    }, function () {
-        alert('Unable to retrieve your location');
+    userMarker.on('dragend', function () {
+      var lngLat = userMarker.getLngLat();
+      document.getElementById('coords').value = `${lngLat.lng},${lngLat.lat}`;
     });
+
+    geolocate.on('geolocate', (e) => {
+      map.flyTo({ center: [e.coords.longitude, e.coords.latitude], zoom: 15 });
+      userMarker.setLngLat([e.coords.longitude, e.coords.latitude])
+      document.getElementById('coords').value = `${e.coords.longitude},${e.coords.latitude}`;
+    });
+
+    geocoder.on('result', function (e) {
+      const coordinates = e.result.geometry.coordinates;
+      userMarker.setLngLat(coordinates);
+      map.flyTo({ center: coordinates, zoom: 15 });
+      document.getElementById('coords').value = `${coordinates[0]},${coordinates[1]}`;
+    });
+  }, function () {
+    alert('Unable to retrieve your location');
+  });
 } else {
-    alert('Geolocation is not supported by your browser');
+  alert('Geolocation is not supported by your browser');
 }
 
 const helpCloseButtonhelpButton = document.getElementById('help-button');
 helpCloseButtonhelpButton.addEventListener('click', () => {
-    document.getElementById('map-container').style.display = 'none';
-    document.getElementById('report-form').style.display = 'none';
-    document.getElementById('help-section').style.display = 'block';
-    document.getElementById('confirmation-screen').style.display = 'none';
+  document.getElementById('map-container').style.display = 'none';
+  document.getElementById('report-form').style.display = 'none';
+  document.getElementById('help-section').style.display = 'block';
+  document.getElementById('confirmation-screen').style.display = 'none';
 });
 
 const confirmLocationButton = document.getElementById('confirm-location-button');
 confirmLocationButton.addEventListener('click', () => {
-    document.getElementById('map-container').style.display = 'none';
-    document.getElementById('report-form').style.display = 'block';
-    document.getElementById('help-section').style.display = 'none';
-    document.getElementById('confirmation-screen').style.display = 'none';
+  document.getElementById('map-container').style.display = 'none';
+  document.getElementById('report-form').style.display = 'block';
+  document.getElementById('help-section').style.display = 'none';
+  document.getElementById('confirmation-screen').style.display = 'none';
 });
 
 const backToMapButton = document.getElementById('back-to-map-button');
 backToMapButton.addEventListener('click', () => {
-    document.getElementById('map-container').style.display = 'block';
-    document.getElementById('report-form').style.display = 'none';
-    document.getElementById('help-section').style.display = 'none';
-    document.getElementById('confirmation-screen').style.display = 'none';
+  document.getElementById('map-container').style.display = 'block';
+  document.getElementById('report-form').style.display = 'none';
+  document.getElementById('help-section').style.display = 'none';
+  document.getElementById('confirmation-screen').style.display = 'none';
 });
 
 const helpCloseButton = document.getElementById('help-close-button');
 helpCloseButton.addEventListener('click', () => {
-    document.getElementById('map-container').style.display = 'block';
-    document.getElementById('report-form').style.display = 'none';
-    document.getElementById('help-section').style.display = 'none';
-    document.getElementById('confirmation-screen').style.display = 'none';
+  document.getElementById('map-container').style.display = 'block';
+  document.getElementById('report-form').style.display = 'none';
+  document.getElementById('help-section').style.display = 'none';
+  document.getElementById('confirmation-screen').style.display = 'none';
 });
 
 const submitButton = document.getElementById('submit');
 submitButton.addEventListener('click', () => {
-    // Collect data.
-    var form = document.getElementById("report-form");
-    var situation = document.querySelector("#situation").value;
+  // Collect data.
+  var form = document.getElementById("report-form");
+  var situation = document.querySelector("#situation").value;
 
-    var persons = Array.from(form.querySelectorAll("[data-person]")).map(person => ({
-        name: person.querySelector("#name").value,
-        nickname: person.querySelector("#nickname").value,
-        familyName: person.querySelector("#family-name").value,
-        contactNumber: person.querySelector("#contact-number").value,
-        status: person.querySelector("#status").value,
-        age: person.querySelector("#name").age,
-        sex: person.querySelector("#name").sex,
-        place: person.querySelector("#name").place,
-    }));
+  var reporterName = document.getElementById("reporter-name").value;
+  var reporterPhone = document.getElementById("reporter-phone").value;
+  var reporterRelation = document.getElementById("reporter-relation").value;
 
-    var kids = document.querySelector("#kids-below-10").value;
-    var seniors = document.querySelector("#seniors-above-60").value;
-    var otherAdults = document.querySelector("#other-adults").value;
-    var notes = document.querySelector("#notes").value;
+  var persons = Array.from(form.querySelectorAll("[data-person]")).map(person => ({
+    name: person.querySelector("#name").value,
+    nickname: person.querySelector("#nickname").value,
+    familyName: person.querySelector("#family-name").value,
+    contactNumber: person.querySelector("#contact-number").value,
+    status: person.querySelector("#status").value,
+    age: person.querySelector("#name").age,
+    sex: person.querySelector("#name").sex,
+    place: person.querySelector("#name").place,
+  }));
 
-    var magic = document.querySelector("#magic").value;
-    var coordinates = document.querySelector("#coords").value;
+  var kids = document.querySelector("#kids-below-10").value;
+  var seniors = document.querySelector("#seniors-above-60").value;
+  var otherAdults = document.querySelector("#other-adults").value;
+  var notes = document.querySelector("#notes").value;
 
-    console.log(situation.value, persons, kids, seniors, otherAdults, notes, magic, coordinates)
+  var magic = document.querySelector("#magic").value;
+  var coordinates = document.querySelector("#coords").value;
 
-    document.getElementById('map-container').style.display = 'none';
-    document.getElementById('report-form').style.display = 'none';
-    document.getElementById('help-section').style.display = 'none';
-    document.getElementById('confirmation-screen').style.display = 'block';
+  console.log(situation.value, persons, kids, seniors, otherAdults, notes, magic, coordinates)
 
-    // Form submission.
-    var apiUrl = 'https://fie5mxoea4.execute-api.ap-south-1.amazonaws.com/prod';
-    var apiKey = 'iRhRWA3DDk2nnFBVfMQjC5wKEZ1F875s7HBCP9pc';
+  document.getElementById('map-container').style.display = 'none';
+  document.getElementById('report-form').style.display = 'none';
+  document.getElementById('help-section').style.display = 'none';
+  document.getElementById('confirmation-screen').style.display = 'block';
 
-    var requestBody = {
-        situation,
-        persons,
-        kids, seniors, otherAdults,
-        notes,
-        magic,
-        coordinates
-    };
+  // Form submission.
+  var apiUrl = 'https://fie5mxoea4.execute-api.ap-south-1.amazonaws.com/prod';
+  var apiKey = 'iRhRWA3DDk2nnFBVfMQjC5wKEZ1F875s7HBCP9pc';
 
-    fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'x-api-key': `${apiKey}`,
-            'origin': 'https://imifindia.github.io'
-        },
-        body: JSON.stringify(requestBody)
+  var requestBody = {
+    situation,
+    reporterName,
+    reporterPhone,
+    reporterRelation,
+    persons,
+    kids, seniors, otherAdults,
+    notes,
+    magic,
+    coordinates
+  };
 
-    }).then(response => {
-        if (response.ok) {
-            document.getElementById('confirmation-message').innerHTML =
-                `<p>${i18next.t('report-submited')}</p>  <i class="fas fa-check text-success display-1"></i>`
-        } else {
-            document.getElementById('confirmation-message').innerHTML =
-                `<p>${i18next.t('report-failed')}</p>  <i class="fas fa-times text-success display-1"></i>`
-        }
+  fetch(apiUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': `${apiKey}`,
+      'origin': 'https://imifindia.github.io'
+    },
+    body: JSON.stringify(requestBody)
 
-    }).catch(error => {
-        document.getElementById('confirmation-message').innerHTML =
-            `<p>${i18next.t('report-failed')}</p>  <i class="fas fa-times text-danger display-1"></i>`
-    });
+  }).then(response => {
+    if (response.ok) {
+      document.getElementById('confirmation-message').innerHTML =
+        `<p>${i18next.t('report-submited')}</p>  <i class="fas fa-check text-success display-1"></i>`
+    } else {
+      document.getElementById('confirmation-message').innerHTML =
+        `<p>${i18next.t('report-failed')}</p>  <i class="fas fa-times text-success display-1"></i>`
+    }
+
+  }).catch(error => {
+    document.getElementById('confirmation-message').innerHTML =
+      `<p>${i18next.t('report-failed')}</p>  <i class="fas fa-times text-danger display-1"></i>`
+  });
 });
 
 // Function to add a new person card.
 function addPersonCard() {
-    const personCard = document.createElement('div');
-    personCard.className = 'card mb-3 person-card';
-    personCard.innerHTML = `
+  const personCard = document.createElement('div');
+  personCard.className = 'card mb-3 person-card';
+  personCard.innerHTML = `
       <div class="card-body" data-person="">
         <div class="form-row">
           <div class="form-group col-md-6">
@@ -226,11 +233,18 @@ function addPersonCard() {
         </div>
       </div>
     `;
-    document.getElementById('people-container').appendChild(personCard);
+  document.getElementById('people-container').appendChild(personCard);
 }
 
-// Event listener for the "Add more people" button
+// Event listeners
 document.getElementById('add-person-btn').addEventListener('click', function (event) {
-    event.preventDefault();
-    addPersonCard();
+  event.preventDefault();
+  addPersonCard();
+});
+
+document.getElementById('situation').addEventListener('change', function (event) {
+  event.preventDefault();
+
+  var container = document.getElementById('reporter-container');
+  container.style.display = event.target.value == 1 ? 'none' : 'block'
 });
