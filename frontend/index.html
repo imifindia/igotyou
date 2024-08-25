@@ -4,23 +4,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>We got you !</title>
+    <title>IMIF | I Got You</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.css" rel="stylesheet">
     <link href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.css'
         rel='stylesheet' />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <link href="styles.css" rel="stylesheet">
+    
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+    <link rel="manifest" href="assets/site.webmanifest">`
 </head>
 
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand navbar-light bg-light position-relative">
+     
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">I Got You</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="index.html">Report an Incident</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="report.html">Control Centre</a>
+                    </li>
+
+                </ul>
+
+            </div>
+        </div>
+    </nav>
+    <!-- <nav class="navbar navbar-expand navbar-light bg-light position-relative">
         <a class="navbar-brand" href="#">We got you !</a>
         <span class="marquee navbar-nav">
             <span>Important Announcement: Please read this message carefully.</span>
         </span>
-    </nav>
+        <a class="navbar-brand" href="report.html">Reports</a>
+    </nav> -->
 
     <!-- Mapbox Map -->
     <div id="map-container">
