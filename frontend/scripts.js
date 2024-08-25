@@ -101,6 +101,15 @@ helpCloseButton.addEventListener('click', () => {
   document.getElementById('confirmation-screen').style.display = 'none';
 });
 
+var handleStartAgainClick = () => {
+  console.log('cli')
+  document.getElementById('map-container').style.display = 'block';
+  document.getElementById('report-form').style.display = 'none';
+  document.getElementById('help-section').style.display = 'none';
+  document.getElementById('confirmation-screen').style.display = 'none';
+  document.getElementById('confirmation-message').innerHTML = '';
+};
+
 const submitButton = document.getElementById('submit');
 submitButton.addEventListener('click', () => {
   // Collect data.
@@ -164,16 +173,29 @@ submitButton.addEventListener('click', () => {
 
   }).then(response => {
     if (response.ok) {
-      document.getElementById('confirmation-message').innerHTML =
-        `<p>${i18next.t('report-submited')}</p>  <i class="fas fa-check text-success display-1"></i>`
+      document.getElementById('confirmation-message').innerHTML = `
+        <p>${i18next.t('report-submited')}</p>  
+        <i class="fas fa-check text-success display-1"></i>
+        <button class="btn btn-primary mt-5" id="start-again-button" onclick={handleStartAgainClick()}>
+            <i class="fas fa-arrow-left mr-2"></i><span>${i18next.t('start-again')}</span>
+        </button>`
+
     } else {
-      document.getElementById('confirmation-message').innerHTML =
-        `<p>${i18next.t('report-failed')}</p>  <i class="fas fa-times text-success display-1"></i>`
+      document.getElementById('confirmation-message').innerHTML = `
+      <p>${i18next.t('report-failed')}</p>  
+      <i class="fas fa-times text-success display-1"></i>
+      <button class="btn btn-primary mt-5" id="start-again-button" onclick={handleStartAgainClick()}>
+          <i class="fas fa-arrow-left mr-2"></i><span>${i18next.t('start-again')}</span>
+      </button>`
     }
 
   }).catch(error => {
-    document.getElementById('confirmation-message').innerHTML =
-      `<p>${i18next.t('report-failed')}</p>  <i class="fas fa-times text-danger display-1"></i>`
+    document.getElementById('confirmation-message').innerHTML = `
+    <p>${i18next.t('report-failed')}</p>  
+    <i class="fas fa-times text-danger display-1"></i>
+    <button class="btn btn-primary mt-5" id="start-again-button" onclick={handleStartAgainClick()}>
+        <i class="fas fa-arrow-left mr-2"></i><span>${i18next.t('start-again')}</span>
+    </button>`
   });
 });
 
